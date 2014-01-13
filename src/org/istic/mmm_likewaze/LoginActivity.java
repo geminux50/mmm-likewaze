@@ -56,7 +56,7 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
-		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+		mEmail = "com.example.android.authenticatordemo.extra.EMAIL";//getIntent().getStringExtra(EXTRA_EMAIL);
 		mEmailView = (EditText) findViewById(R.id.email);
 		mEmailView.setText(mEmail);
 
@@ -84,8 +84,10 @@ public class LoginActivity extends Activity {
 			@Override
 			public void onClick(View view) {
 				// attemptLogin();
+				/*Intent intent = new Intent(LoginActivity.this,
+						VehiculeModeActivity.class);*/
 				Intent intent = new Intent(LoginActivity.this,
-						VehiculeModeActivity.class);
+						IHmap.class);
 				startActivity(intent);
 
 			}
