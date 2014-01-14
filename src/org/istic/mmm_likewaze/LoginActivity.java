@@ -87,7 +87,7 @@ public class LoginActivity extends Activity {
 				/*Intent intent = new Intent(LoginActivity.this,
 						VehiculeModeActivity.class);*/
 				Intent intent = new Intent(LoginActivity.this,
-						IHmap.class);
+						TestJson.class);
 				startActivity(intent);
 
 			}
