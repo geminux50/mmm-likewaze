@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
     tools:context=".VehiculeModeActivity" >
 
     <fragment
@@ -9,5 +10,57 @@
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/btn_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="@string/menu_main" />
+
+    <Button
+        android:id="@+id/btn_appel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/menu_appel" />
+
+    <Button
+        android:id="@+id/btn_poi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/menu_poi" />
+
+    <ImageButton
+        android:id="@+id/btn_zoom_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_poi"
+        android:layout_alignRight="@+id/btn_poi"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/zoom_out_96" />
+
+    <ImageButton
+        android:id="@+id/btn_zoom_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_zoom_out"
+        android:layout_alignRight="@+id/btn_zoom_out"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_in_description"
+        android:src="@drawable/zoom_in_96" />
 
 </RelativeLayout>
