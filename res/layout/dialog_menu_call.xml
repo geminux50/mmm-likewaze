@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MenuCallGridLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="4"
+    android:orientation="horizontal"
+    android:rowCount="1"
+    tools:context=".VehiculeModeActivity" >
+
+    <ImageButton
+        android:id="@+id/BtnCall15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/call15_96" />
+
+    <ImageButton
+        android:id="@+id/BtnCall17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/call17_96" />
+
+    <ImageButton
+        android:id="@+id/BtnCall18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/call18_96" />
+
+    <ImageButton
+        android:id="@+id/BtnCall112"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/call112_96" />
+
+</GridLayout>

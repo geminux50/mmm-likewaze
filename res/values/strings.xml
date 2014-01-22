@@ -14,5 +14,10 @@
     <string name="zoom_out">-</string>
     <string name="zoom_in_description">zoom in</string>
     <string name="zoom_out_description">zoom out</string>
+    <string name="quit_description">quitter</string>
+    <string name="dialog_poi_title">Signaler</string>
+    <string name="dialog_call_title">Appeler</string>
+    <string name="dialog_main_title">Menu</string>
+    <string name="dialog_main_quit">Quitter</string>
 
 </resources>

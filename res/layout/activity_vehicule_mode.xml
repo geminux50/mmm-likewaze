@@ -12,7 +12,7 @@
         android:layout_height="match_parent" />
 
     <Button
-        android:id="@+id/btn_main"
+        android:id="@+id/btn_menu_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -22,7 +22,7 @@
         android:text="@string/menu_main" />
 
     <Button
-        android:id="@+id/btn_appel"
+        android:id="@+id/btn_menu_call"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -32,7 +32,7 @@
         android:text="@string/menu_appel" />
 
     <Button
-        android:id="@+id/btn_poi"
+        android:id="@+id/btn_menu_poi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -45,8 +45,8 @@
         android:id="@+id/btn_zoom_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_poi"
-        android:layout_alignRight="@+id/btn_poi"
+        android:layout_above="@+id/btn_menu_poi"
+        android:layout_alignRight="@+id/btn_menu_poi"
         android:layout_marginBottom="10dp"
         android:background="@drawable/pressed_96"
         android:contentDescription="@string/zoom_out_description"
