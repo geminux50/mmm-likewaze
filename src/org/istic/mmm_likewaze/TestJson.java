@@ -1,18 +1,12 @@
 package org.istic.mmm_likewaze;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.istic.likewaze.local.controller.UserController;
+import com.istic.mmm_likewaze.model.Poi;
 import com.istic.mmm_likewaze.model.User;
+import com.istic.mmm_likewaze.remote.controller.RemotePoiController;
+import com.istic.mmm_likewaze.remote.controller.RemoteUserController;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -25,10 +19,33 @@ public class TestJson extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_test_json);
-		Log.i("OPERATION:","Calling the user controller" );
-		UserController usrCntrl = new UserController(this.getResources().openRawResource(R.raw.local_user_store));
-	    usrCntrl.login("user1", "pass");
-	   
+		
+		// Login Scenario ..... 
+		
+		Log.i("OPERATION:","Calling the user controller  remote  to Log in  " );
+		
+		RemoteUserController usrcntrl = new RemoteUserController();
+		User u =usrcntrl.login("user1", "pass1");
+		if(u==null){
+			Log.i("Log Result :" ," Loggin failed ! ");
+		}else{
+			Log.i("Log Result :" ," Loggin success  ! ");
+		}
+		
+		// Retrieving PoiList scenario .....
+		
+		Log.i("OPERATION:","Calling the poi controller to Retrievce Poi Points  ");
+		
+		RemotePoiController  poicntrl = new RemotePoiController();
+		ArrayList<Poi>  poiList= poicntrl.getAllPoi();
+		if(poiList==null){
+			Log.i("Poi Result :" ," Poi retrieved a List failed ! ");
+		}else{
+			Log.i("Poi Result :" ," Poi retrieved a List  sucess  ! ");
+		}
+		
+		
+		
 	}
 
 	@Override

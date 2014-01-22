@@ -19,10 +19,10 @@ import org.json.JSONTokener;
 import android.graphics.PorterDuff.Mode;
 import android.util.Log;
 
-import com.istic.mmm_likewaze.api.UserAPI;
+import com.istic.mmm_likewaze.api.UserService;
 import com.istic.mmm_likewaze.model.User;
 
-public class UserController  implements UserAPI {
+public class UserController  implements UserService {
 
 	private InputStream USER_PATH_NAME;
 	
@@ -30,7 +30,7 @@ public class UserController  implements UserAPI {
 		USER_PATH_NAME=filepath;
 	}
 	@Override
-	public boolean login(String _pseudo, String _passwd) {
+	public User login(String _pseudo, String _passwd) {
 		
 		try
 	    {
@@ -65,27 +65,15 @@ public class UserController  implements UserAPI {
 	    } catch (JSONException e) {
 	        e.printStackTrace();
 	    }
-		return false;
+		return null;
+	}
+	@Override
+	public void signUp(User usr) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	@Override
-	public void signUp(User usr, OutputStream USER_PATH) {
-		
-		OutputStream USER_PATH_NAME_WRITE = null;
-		
-		try
-	    {
-	       
-			
-	        BufferedWriter jsonwriter = new BufferedWriter(new OutputStreamWriter(USER_PATH_NAME_WRITE));
-	        jsonwriter.append("{ pseudo:22 , passwd:rr}");
-	        jsonwriter.flush();
-	      
-	       // setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, fields));
-	   
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	}
+
+
 
 }
