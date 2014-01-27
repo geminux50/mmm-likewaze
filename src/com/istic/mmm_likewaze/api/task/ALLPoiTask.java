@@ -37,7 +37,7 @@ public class ALLPoiTask  extends GenericAsynTaskExec{
 		            if(jsonObject !=null){
 		            	///Log.i("Obj User: "," :"+jsonObject.get("pseudo")+" -- v:"+jsonObject.get("passwd") );
 		            	Poi currPOI = new Poi();
-		            	currPOI.setIdGpsPts(Integer.parseInt(jsonObject.get("idGpsPts").toString()));
+		            	//currPOI.setIdGpsPts(Integer.parseInt(jsonObject.get("idGpsPts").toString()));
 		            	currPOI.setCurLat(Double.parseDouble(jsonObject.get("curLat").toString()));
 		            	currPOI.setCurLong(Double.parseDouble(jsonObject.get("curLong").toString()));
 		            	currPOI.setLabel(jsonObject.get("label").toString());

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">LikeWaze</string>
+    <string name="app_name">Likewaze</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_vehicule_mode">VehiculeModeActivity</string>
@@ -9,5 +9,18 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_ihmap">IHmap</string>
     <string name="title_activity_test_json">TestJson</string>
-
+    
+    <string name="menu_main">Menu</string>
+    <string name="menu_poi">Signaler</string>
+    <string name="menu_appel">Appels</string>
+    <string name="zoom_in">+</string>
+    <string name="zoom_out">-</string>
+    <string name="zoom_in_description">zoom in</string>
+    <string name="zoom_out_description">zoom out</string>
+    <string name="quit_description">quitter</string>
+    <string name="dialog_poi_title">Signaler</string>
+    <string name="dialog_call_title">Appeler</string>
+    <string name="dialog_main_title">Menu</string>
+    <string name="dialog_main_quit">Quitter</string>
+    
 </resources>

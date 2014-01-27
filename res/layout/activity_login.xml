@@ -3,8 +3,7 @@
     tools:context=".LoginActivity" >
 
     <!-- Login progress -->
-
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/login_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,11 +39,35 @@
             style="@style/LoginFormContainer"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/waze_message_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:text="@string/waze_message"
+                android:textColor="@color/blue_light"
+                android:textSize="@dimen/font_size_waze"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:src="@drawable/waze" />
+
+            <TextView
+                android:id="@+id/login_message_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:text="@string/login_message" />
+
             <EditText
-                android:id="@+id/email"
+                android:id="@+id/pseudo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_email"
+                android:hint="@string/prompt_pseudo"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -69,8 +92,18 @@
                 android:layout_marginTop="16dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
+                android:background="@color/blue_light"
                 android:text="@string/action_sign_in_register" />
+            <TextView
+                android:id="@+id/sign_up_message_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 android:layout_marginTop="50dp"
+                android:text="@string/sign_up_message"
+                />
+            
         </LinearLayout>
+
     </ScrollView>
 
 </merge>
