@@ -5,14 +5,54 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="14" />
 
+    <permission android:name="org.istic.mmm_likewaze.permission.MAPS_RECEIVE"
+        		android:protectionLevel="signature">
+	</permission>
+    
+    <uses-permission android:name="org.istic.mmm_likewaze.permission.MAPS_RECEIVE">
+    </uses-permission>
+        
+    <!-- Permission pour utiliser la connexion internet -->
+    <uses-permission android:name="android.permission.INTERNET">
+    </uses-permission>
+    	
+    <!-- Permission permettant de vérifier l'état de la connexion -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">
+    </uses-permission>
+    	
+    <!-- Permission pour stocker des données en cache de la map -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE">
+    </uses-permission>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES">
+    </uses-permission>
+   	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION">
+    </uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION">
+    </uses-permission>
+    	
+    <!-- OpenGL ES version 2 OBLIGATOIRE !!! -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true">
+    </uses-feature>
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
+         <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDwq0tYmQXkTMetNIL0K79X1y1YaV-kN6Y">
+        </meta-data> 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+         
         <activity
             android:name="org.istic.mmm_likewaze.LoginActivity"
             android:label="@string/title_activity_login"
@@ -27,6 +67,10 @@
             android:label="@string/title_activity_vehicule_mode"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name="org.istic.mmm_likewaze.PietonModeActivity"
+            android:label="@string/title_activity_pieton_mode"
+            android:screenOrientation="portrait">
+        </activity>            	
     </application>
-
 </manifest>

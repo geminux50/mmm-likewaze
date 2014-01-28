@@ -5,7 +5,20 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_vehicule_mode">VehiculeModeActivity</string>
+    <string name="title_activity_pieton_mode">PietonModeActivity</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="labelAccellaxeX">Accélération en X</string>
+    <string name="labelAccellaxeY">Accélération en Y</string>
+    <string name="labelAccellaxeZ">Accélération en Z</string>
+    <string name="zoom_in_description">zoom in</string>
+    <string name="zoom_out_description">zoom out</string>
+    
+    
+    <string name="menu_main_pieton">Menu pour piétons</string>
+    <string name="dialog_pieton_title">Signaler</string>
+    <string name="menu_pieton_panne">EN PANNE !!!</string>
+    <string name="menu_pieton_autostop">Auto-Stop</string>
+     
+<!--     <string name="menu_appel">Appels</string> -->
 </resources>
