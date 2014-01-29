@@ -13,12 +13,13 @@
     <string name="labelAccellaxeZ">Accélération en Z</string>
     <string name="zoom_in_description">zoom in</string>
     <string name="zoom_out_description">zoom out</string>
-    
-    
     <string name="menu_main_pieton">Menu pour piétons</string>
     <string name="dialog_pieton_title">Signaler</string>
     <string name="menu_pieton_panne">EN PANNE !!!</string>
     <string name="menu_pieton_autostop">Auto-Stop</string>
-     
-<!--     <string name="menu_appel">Appels</string> -->
+
+    <!-- <string name="menu_appel">Appels</string> -->
+    <string name="title_activity_direction_auto_stop">DirectionAutoStop</string>
+	<string name="msgDirection">Déplacez-vous en direction de votre destination</string>
+	<string name="txtBtnDirection">OK</string>
 </resources>

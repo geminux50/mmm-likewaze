@@ -88,6 +88,7 @@ public class LoginActivity extends Activity {
 				//		VehiculeModeActivity.class);
 				Intent intent = new Intent(LoginActivity.this,
 				PietonModeActivity.class);
+				intent.putExtra("retourDirec", false);
 				startActivity(intent);
 
 			}
