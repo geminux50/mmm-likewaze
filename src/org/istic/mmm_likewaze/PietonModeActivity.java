@@ -1,16 +1,15 @@
 package org.istic.mmm_likewaze;
 
-import com.google.android.gms.internal.bn;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.app.Activity;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -25,11 +24,39 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 	
 	 double latitude;
      double longitude;
+     
      private GoogleMap googleMap;
      private CameraUpdate camera;
+     private LocationManager locationManager;
+     private float zoomFactor = 18f;
+     private LatLng currentPosition;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		//********************************************************************
+		// verification de la presence d'un accelerometre sur le device !!!
+		boolean presenceAccel = GestionAccelerometre.accelerometrePresent(getApplicationContext());
+		if(!presenceAccel){
+			String texteMsg = "Votre téléphone ne possede pas d'accéléromètre !!!";
+			texteMsg += "\n\n";
+			texteMsg += "Vous ne pouvez pas utiliser le mode 'PANIC'";
+					
+			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
+		}else{
+			String texteMsg = "Votre téléphone possede un d'accéléromètre !!!";
+			texteMsg += "\n\n";
+			texteMsg += "Vous pouvez utiliser le mode 'PANIC'";
+					
+			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
+		}
+				
+		Accelerometre acc = new Accelerometre(this);
+		acc.start();
+		//********************************************************************
+		
+		
+		
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pieton_mode);
@@ -84,13 +111,27 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 					int resID = childView.getId();
 
 					switch (resID) {
+					
 					case R.id.BtnAutoStop:
 						
-						setPoiBtnAction((ImageButton) childView, PoiType.RADAR);
+						((ImageButton) childView).setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								autoStopAction();																
+							}
+						});
 						break;
 
 					case R.id.BtnPanne:
-						setPoiBtnAction((ImageButton) childView, PoiType.RADAR);
+
+						((ImageButton) childView).setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								panneAction();																
+							}
+						});
 						break;
 						
 					default:
@@ -117,33 +158,85 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
             initilizeMap();
     }
 
+	private void autoStopAction(){
+		Toast.makeText(getApplicationContext(), "autoStopAction",
+				Toast.LENGTH_SHORT).show();
+	}
 	
+	private void panneAction(){
+		Toast.makeText(getApplicationContext(), "panneAction",
+				Toast.LENGTH_SHORT).show();
+	}
 
 	private void initilizeMap() {
-		
-		//latitude = 47.750203;
-		//longitude = -1.681212;
-		
-//        if (googleMap == null) {
-//                googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-//                                R.id.map)).getMap();
-//                googleMap.setMyLocationEnabled(true);
-//                
-//                MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps ");
-//                 
-//                googleMap.addMarker(marker);
-//                
-//                if (googleMap == null) {
-//                        Toast.makeText(getApplicationContext(),
-//                                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-//                                        .show();
-//                }
-//        }
-}
+
+		// Create the map if it does not exists
+		if (googleMap == null) {
+			googleMap = ((MapFragment) getFragmentManager().findFragmentById(
+					R.id.map)).getMap();
+
+			if (googleMap != null) {
+				// Allow the app to get the current position
+				googleMap.setMyLocationEnabled(true);
+
+				// Disable built-in zoom buttons
+				googleMap.getUiSettings().setZoomControlsEnabled(false);
+
+				// Disable built-in MyLocation button
+				googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+				// Get the location manager
+				locationManager = (LocationManager) this
+						.getSystemService(LOCATION_SERVICE);
+
+				if (locationManager != null) {
+					if (locationManager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+						// Refresh the location each 5 secondes (with GPS)
+						locationManager.requestLocationUpdates(
+								LocationManager.GPS_PROVIDER, 5000, 0, this);
+					}
+					// Refresh the location each 5 secondes (with Network)
+					
+					locationManager.requestLocationUpdates(
+							LocationManager.NETWORK_PROVIDER, 5000, 0, this);
+
+					// Get the best provider (GPS if enable - best accuracy,
+					// Network if GPS is disable)
+					String provider = locationManager.getBestProvider(
+							new Criteria(), true);
+
+					if (provider != null) {
+						// Get the last know position even if outdated
+						Location location = locationManager
+								.getLastKnownLocation(provider);
+						if (location != null) {
+							LatLng lastPosition = new LatLng(
+									location.getLatitude(),
+									location.getLongitude());
+
+							// Positionning the camera on the last know position
+							// with the given zoom factor
+							camera = CameraUpdateFactory.newLatLngZoom(
+									lastPosition, zoomFactor);
+							googleMap.moveCamera(camera);
+							googleMap.animateCamera(camera);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
+		// Get the current position
+		currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+
+		// Camera follow the new position
+		camera = CameraUpdateFactory.newLatLngZoom(currentPosition, zoomFactor);
+		googleMap.moveCamera(camera);
+		googleMap.animateCamera(camera);
 		
 	}
 
@@ -165,4 +258,11 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		
 	}
 
+	
+	public void secouage(){
+		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!", Toast.LENGTH_SHORT).show();
+	}
+	
+	
+	
 }
