@@ -1,0 +1,13 @@
+We need to share this keystore to be able to use the same google map key
+So we'll not have to change the api key when test others dev branch
+
+Copy the debug.keystore to :
+Windows : C:\Users\HMK\.android\debug.keystore
+Under Linux : /home/<user>/.android/debug.keystore
+
+Restart Eclipse ad check the Keystore path :
+Window > Preferences > Android > Build > (Default debug keystore)
+
+Open the AndroidManifest.xml and ensure to have this key :
+  android:name="com.google.android.maps.v2.API_KEY"
+  android:value="AIzaSyAoEQ9VGY0liyxZ_x6Hds4fiJ-4-Da2eqY"
