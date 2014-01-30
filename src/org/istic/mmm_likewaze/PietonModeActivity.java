@@ -32,7 +32,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
      private GoogleMap googleMap;
      private CameraUpdate camera;
      private LocationManager locationManager;
-     private float zoomFactor = 18f;
+     private float zoomFactor = 15f;
      private LatLng currentPosition;
      
      private float directionDeplacement;
@@ -42,24 +42,24 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		//********************************************************************
-		// verification de la presence d'un accelerometre sur le device !!!
-		boolean presenceAccel = GestionAccelerometre.accelerometrePresent(getApplicationContext());
-		if(!presenceAccel){
-			String texteMsg = "Votre téléphone ne possede pas d'accéléromètre !!!";
-			texteMsg += "\n\n";
-			texteMsg += "Vous ne pouvez pas utiliser le mode 'PANIC'";
-					
-			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
-		}else{
-			String texteMsg = "Votre téléphone possede un d'accéléromètre !!!";
-			texteMsg += "\n\n";
-			texteMsg += "Vous pouvez utiliser le mode 'PANIC'";
-					
-			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
-		}
-				
-		Accelerometre acc = new Accelerometre(this);
-		acc.start();
+//		// verification de la presence d'un accelerometre sur le device !!!
+//		boolean presenceAccel = GestionAccelerometre.accelerometrePresent(getApplicationContext());
+//		if(!presenceAccel){
+//			String texteMsg = "Votre téléphone ne possede pas d'accéléromètre !!!";
+//			texteMsg += "\n\n";
+//			texteMsg += "Vous ne pouvez pas utiliser le mode 'PANIC'";
+//					
+//			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
+//		}else{
+//			String texteMsg = "Votre téléphone possede un d'accéléromètre !!!";
+//			texteMsg += "\n\n";
+//			texteMsg += "Vous pouvez utiliser le mode 'PANIC'";
+//					
+//			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
+//		}
+//				
+//		Accelerometre acc = new Accelerometre(this);
+//		acc.start();
 		//********************************************************************
 		
 		
@@ -69,18 +69,33 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		setContentView(R.layout.activity_pieton_mode);
 		
 		//récupération de la variable
+		retourDirection = false;
         Bundle extra = getIntent().getExtras();
         directionDeplacement = extra.getFloat("Cap");
         retourDirection = extra.getBoolean("retourDirec");
+        latitude = extra.getDouble("latitude");
+        longitude = extra.getDouble("longitude");
         
-
-		
+        //String txt = retourDirection.;
+        
+        Toast.makeText(getApplicationContext(),
+				"-" + retourDirection
+				+ "-" + directionDeplacement
+				+ "-" + latitude
+				+ "-" + longitude, Toast.LENGTH_LONG)
+				.show();
+        
 		try {
 			initilizeMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		if(retourDirection){
+			currentPosition = new LatLng(latitude, longitude);
+			placementAutoStop();
+		}
+				
 		final ImageButton btn_zoom_in = (ImageButton) findViewById(R.id.btn_zoom_in);
 		final ImageButton btn_zoom_out = (ImageButton) findViewById(R.id.btn_zoom_out);
 		final Button btn_menu_pieton = (Button) findViewById(R.id.btn_menu_pieton);
@@ -154,14 +169,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 				}
 				
 			}
-		});
-		
-		if(retourDirection){
-			placementAutoStop();
-		}
-		
-		
-		
+		});		
 	}
 
 	@Override
@@ -174,18 +182,15 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 	@Override
     protected void onResume() {
             super.onResume();
-            initilizeMap();
+            //initilizeMap();
     }
 
 	private void autoStopAction(){
-		Toast.makeText(getApplicationContext(), "autoStopAction",
-				Toast.LENGTH_SHORT).show();
-		
+				
 		Intent recupDirection = new Intent(this, DirectionAutoStop.class);
 		startActivity(recupDirection);
 		
-		
-		
+		this.finish();	
 	}
 	
 	private void panneAction(){
@@ -268,7 +273,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
 		// Camera follow the new position
-		camera = CameraUpdateFactory.newLatLngZoom(currentPosition, zoomFactor);
+		//@ModifMarc
+		camera = CameraUpdateFactory.newLatLng(currentPosition);
 		googleMap.moveCamera(camera);
 		googleMap.animateCamera(camera);
 		
@@ -292,10 +298,6 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		
 	}
 
-	
-	public void secouage(){
-		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!", Toast.LENGTH_SHORT).show();
-	}
 	
 	public void placementAutoStop(){
 		

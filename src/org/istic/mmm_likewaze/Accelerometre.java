@@ -22,7 +22,7 @@ public class Accelerometre implements SensorEventListener{
     private long currentTime = -1;
     private float last_x, last_y, last_z;
     private float current_x, current_y, current_z;
-    private static final int FORCE_THRESHOLD = 1300;
+    private static final int FORCE_THRESHOLD = 1500;
     
     private final int DATA_X = SensorManager.DATA_X;
     private final int DATA_Y = SensorManager.DATA_Y;
@@ -71,13 +71,10 @@ public class Accelerometre implements SensorEventListener{
  
             if (currenForce > FORCE_THRESHOLD) {
  
-                // Le téléphone à été secoué donc si le mp3 ne
-                // joue pas, le démarrer ...
-                Log.d("JgeekLog","FORCE > FORCE_THRESHOLD, force = " + currenForce);
- 
-                ((PietonModeActivity)appelant).secouage();
+                ((VehiculeModeActivity)appelant).secouage();
  
             }
+            
             last_x = current_x;
             last_y = current_y;
             last_z = current_z;

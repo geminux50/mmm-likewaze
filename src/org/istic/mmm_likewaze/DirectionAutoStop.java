@@ -1,5 +1,7 @@
 package org.istic.mmm_likewaze;
 
+import java.util.List;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import android.location.Criteria;
@@ -15,8 +17,8 @@ import android.widget.Toast;
 public class DirectionAutoStop extends Activity implements LocationListener {
 
 	private LocationManager locationManager;
-	private LatLng[] pts;
-	private int nbPts;
+	private List<LatLng> lstPts;
+	//private int nbPts;
 	private float cap;
 	
 	static final int nbPtsUtiles = 2;
@@ -26,7 +28,7 @@ public class DirectionAutoStop extends Activity implements LocationListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_direction_auto_stop);
 		
-		nbPts = 1;
+		
 		
 		locationManager = (LocationManager) this
 				.getSystemService(LOCATION_SERVICE);
@@ -34,13 +36,13 @@ public class DirectionAutoStop extends Activity implements LocationListener {
 		if (locationManager != null) {
 			if (locationManager
 					.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-				// Refresh the location each 5 secondes (with GPS)
+				// Refresh the location each 2 secondes (with GPS)
 				locationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, 2000, 10, this);
+						LocationManager.GPS_PROVIDER, 2000, 15, this);
 			}
-			// Refresh the location each 5 secondes (with Network)
+			// Refresh the location each 2 secondes (with Network)
 			locationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, 2000, 10, this);
+					LocationManager.NETWORK_PROVIDER, 2000, 15, this);
 
 			// Get the best provider (GPS if enable - best accuracy,
 			// Network if GPS is disable)
@@ -62,11 +64,11 @@ public class DirectionAutoStop extends Activity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 
-		pts[nbPts] = new LatLng(location.getLatitude(),
-				location.getLongitude());
-		nbPts++;
+		lstPts.add(new LatLng(location.getLatitude(),
+				location.getLongitude()));
 		
-		if(nbPts >= nbPtsUtiles){
+		if(lstPts.size() >= (nbPtsUtiles - 1)){
+			locationManager.removeUpdates(this);
 			traitementDirection();
 		}
 	}
@@ -92,10 +94,10 @@ public class DirectionAutoStop extends Activity implements LocationListener {
 	private void traitementDirection(){
 		float[] result = new float[3];
 		
-		Location.distanceBetween(	pts[1].latitude, 
-									pts[1].longitude, 
-									pts[2].latitude,
-									pts[2].longitude,
+		Location.distanceBetween(	lstPts.get(0).latitude, 
+									lstPts.get(0).longitude, 
+									lstPts.get(1).latitude,
+									lstPts.get(1).longitude,
 									result);
 		
 		
@@ -108,8 +110,10 @@ public class DirectionAutoStop extends Activity implements LocationListener {
 		Intent t = new Intent(this, PietonModeActivity.class);
 		t.putExtra("Cap", cap);
 		t.putExtra("retourDirec", true);
+		t.putExtra("latitude", lstPts.get(1).latitude);
+		t.putExtra("longitude", lstPts.get(1).longitude);
 		startActivity(t);
 		
-		
+		this.finish();
 	}
 }
