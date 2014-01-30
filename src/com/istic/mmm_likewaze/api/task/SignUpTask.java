@@ -1,5 +1,7 @@
 package com.istic.mmm_likewaze.api.task;
 
+import android.util.Log;
+
 import com.istic.mmm_likewaze.model.User;
 
 
@@ -26,7 +28,9 @@ public class SignUpTask   extends GenericAsynTaskExec{
 	protected Void doInBackground(Void... params) {
 		
 		 ServiceHandler sh = new ServiceHandler();
-		 sh.makeServiceCallPost(_url_Query,_userToSignUp);
+		 String resp= sh.makeServiceCallPost(_url_Query,_userToSignUp);
+		 Log.d("Response  of post : ", "> " + resp);
+		 
 		 return null;
 	}
 

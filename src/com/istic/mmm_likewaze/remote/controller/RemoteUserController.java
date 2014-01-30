@@ -24,7 +24,8 @@ public class RemoteUserController    implements UserService   {
 		 
 		 
 		 LoginTask logtsk = new LoginTask();
-		 logtsk.setUrlQuery("http://1-dot-likewize-m2gl.appspot.com/rest/user/login/"+pseudo+"/"+passwd);
+		 //logtsk.setUrlQuery("http://1-dot-likewize-m2gl.appspot.com/rest/user/login/"+pseudo+"/"+passwd); oldone
+		 logtsk.setUrlQuery(ServerURL.server_url+"/rest/user/oplogin/"+pseudo+"/"+passwd);
 		 logtsk.setOperation(ServiceHandler.GET);
 		 logtsk.execute(); 
 		 try {
@@ -50,7 +51,7 @@ public class RemoteUserController    implements UserService   {
 		 
 		 
 		 SignUpTask suptsk = new  SignUpTask ();
-		 suptsk.setUrlQuery("http://1-dot-likewize-m2gl.appspot.com/rest/user/adduser");
+		 suptsk.setUrlQuery(ServerURL.server_url+"/rest/user/create");
 		 suptsk.setUser(us);
 		 suptsk.execute(); 
 		 try {

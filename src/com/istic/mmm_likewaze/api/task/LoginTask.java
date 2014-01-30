@@ -38,9 +38,8 @@ public class LoginTask   extends GenericAsynTaskExec  {
 		            _resLogin.setPasswd(jsonObject.get("passwd").toString());
 		            _resLogin.setPseudo(jsonObject.get("pseudo").toString());
 		            _resLogin.setEmail(jsonObject.get("email").toString());
-		            _resLogin.setUserId(Integer.parseInt(jsonObject.get("userId").toString()));
-		           
-			        
+		            _resLogin.setUserId(Long.parseLong(jsonObject.get("userId").toString()));
+		            
 		           // and others 
 		       
 		} catch (JSONException e) {

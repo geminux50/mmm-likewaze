@@ -1,24 +1,22 @@
 package org.istic.mmm_likewaze;
 
-import com.istic.mmm_likewaze.model.User;
-import com.istic.mmm_likewaze.remote.controller.RemoteUserController;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.istic.mmm_likewaze.model.User;
+import com.istic.mmm_likewaze.remote.controller.RemoteUserController;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -86,9 +84,12 @@ public class LoginActivity extends Activity {
 					//  to delte just for test now 
 						
 						if( attemptLogin()  == true){
-
-						Intent intent = new Intent(LoginActivity.this, VehiculeModeActivity.class);
-					    startActivity(intent);							
+                           Log.i("RESULT LOGIN :", "  login succeded  ! ");
+						//Intent intent = new Intent(LoginActivity.this, VehiculeModeActivity.class);
+					    //startActivity(intent);							
+						}else{
+							
+							Log.i("RESULT LOGIN:","login failed " );
 						}
 
 					}}	
@@ -97,9 +98,11 @@ public class LoginActivity extends Activity {
 				);
 		
 		_usrcntrl = new RemoteUserController();
-		
-		
-		
+			
+		//  To delate later
+	
+		Intent intent = new Intent(LoginActivity.this, TestJson.class);
+	    startActivity(intent);	
 		
 	}
 
