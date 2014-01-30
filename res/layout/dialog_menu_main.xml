@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:context=".VehiculeModeActivity" >
+
+    <TextView
+        android:id="@+id/TvQuit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/quit_96_noborder_white"  
+        android:gravity="center"
+        android:paddingRight="8dp"
+        android:text="@string/dialog_main_quit"
+        android:textSize="18sp" />
+
+</RelativeLayout>

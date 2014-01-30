@@ -8,8 +8,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-public class MenuDialog extends AlertDialog{
-	
+
+public class MenuDialog extends AlertDialog {
+
 	public MenuDialog(Context context, int title, Button srcBtn, int layout) {
 		super(context);
 
@@ -38,4 +39,6 @@ public class MenuDialog extends AlertDialog{
 		// Disable icon near the title
 		this.setIcon(0);
 	}
+
 }
+
