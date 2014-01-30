@@ -13,7 +13,7 @@
         android:id="@+id/BtnAutoStop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_columnSpan="3"
+        android:layout_columnSpan="2"
         android:layout_gravity="fill_horizontal"
         android:background="@drawable/pressed_96"
         android:contentDescription="@string/menu_pieton_autostop"
