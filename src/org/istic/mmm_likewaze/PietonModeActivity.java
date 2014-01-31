@@ -500,7 +500,6 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 					icon(BitmapDescriptorFactory.fromResource(R.drawable.nord)));
 
 			//TODO envoi d'un POI
-			
 		}
 
 		Toast.makeText(getApplicationContext(), "bearing : " + bearing,
