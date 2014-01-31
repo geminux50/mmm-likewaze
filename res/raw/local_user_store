@@ -1,0 +1,14 @@
+[
+{
+    "pseudo": "user1",
+    "passwd": "pass"
+  },
+  {
+    "pseudo": "user2",
+    "passwd": "pass"
+  },
+  {
+     "pseudo": "user3",
+     "passwd": "pass"
+  }
+]

@@ -1,5 +1,11 @@
 package org.istic.mmm_likewaze;
 
+import java.util.ArrayList;
+
+import org.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.TypePoi;
+import org.istic.mmm_likewaze.remote.controller.RemotePoiController;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.location.Criteria;
@@ -9,6 +15,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +29,9 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class VehiculeModeActivity extends FragmentActivity implements
 		LocationListener {
@@ -39,6 +48,9 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 	static final int TIME_OUT = 15000;
 	static final int MSG_DISMISS_DIALOG = 0;
+
+	//  Poi service
+	RemotePoiController  _poicntrl;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,9 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		try {
 			// Initialize the map
 			initilizeMap();
+
+			// populate teh map with list of Pois 
+			populateTheMapWithPoi(googleMap);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,7 +143,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					default:
 						break;
 					}
-
 				}
 			}
 		});
@@ -162,6 +176,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 			}
 
 			private void setPoiBtnAction(ImageButton btn, PoiType poiType) {
+
 				btn.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -231,6 +246,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		});
 
 		createDialog();
+
 	}
 
 	/**
@@ -295,6 +311,59 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		}
 	}
 
+	
+	/**
+	 *  Makes a request to the serveur to retrieve alist of POI
+	 * @param mMap: the map to populate
+	 */
+	public void  populateTheMapWithPoi(GoogleMap mMap){
+		
+		 _poicntrl = new RemotePoiController();
+		  ArrayList<Poi>  poiList= _poicntrl.getAllPoi();
+		  for(int i=0 ; i< poiList.size(); i++){
+			  
+			 if( poiList.get(i).getType().equals(TypePoi.ACCIDENT)){
+				 mMap.addMarker(new MarkerOptions()
+					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
+					icon(BitmapDescriptorFactory.fromResource(R.drawable.accident)));
+				    Log.i("DRWING : "," ACCIDENT  ***********");
+			 }
+			  
+			 if( poiList.get(i).getType().equals(TypePoi.FLOOD)){
+				 mMap.addMarker(new MarkerOptions()
+					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
+					icon(BitmapDescriptorFactory.fromResource(R.drawable.waterdrops)));
+			 }
+			 if( poiList.get(i).getType().equals(TypePoi.POLICE)){
+				 mMap.addMarker(new MarkerOptions()
+					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
+					icon(BitmapDescriptorFactory.fromResource(R.drawable.police)));
+			 }
+			 
+			 if( poiList.get(i).getType().equals(TypePoi.USER)){
+				 mMap.addMarker(new MarkerOptions()
+					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
+					icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
+			 }
+			 
+			 if( poiList.get(i).getType().equals(TypePoi.FIRE)){
+				 mMap.addMarker(new MarkerOptions()
+					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
+					icon(BitmapDescriptorFactory.fromResource(R.drawable.hazard)));
+			 }
+			 
+			 // so on 
+		  }
+		
+		LatLng position = new LatLng(48.121781, -1.65451);
+	      
+		mMap.addMarker(new MarkerOptions()
+		.position(position).
+		icon(BitmapDescriptorFactory.fromResource(R.drawable.accident)));
+		  
+		  
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -339,7 +408,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		}
 
 		// Camera follow the new position
-		// @ModifMarc
 		camera = CameraUpdateFactory.newLatLng(currentPosition);
 		googleMap.moveCamera(camera);
 		googleMap.animateCamera(camera);
@@ -398,3 +466,4 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	};
 
 }
+

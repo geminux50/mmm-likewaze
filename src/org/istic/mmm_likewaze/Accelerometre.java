@@ -9,8 +9,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-
-
 public class Accelerometre implements SensorEventListener{
 
 	public float currenForce;

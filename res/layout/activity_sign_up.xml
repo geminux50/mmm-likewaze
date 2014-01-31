@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000" >
+
+        <TextView
+            android:id="@+id/addContactTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_user"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#FFFFFF" />
+    </TableRow>
+     
+    <!--   Add the rows  -->
+    
+     <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/peudoTextViewId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/padding_5dp"
+            android:text="@string/pseudo_text_view" />
+
+        <EditText
+            android:id="@+id/pseudoSignUpEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:paddingRight="@dimen/padding_5dp" >
+
+            <requestFocus />
+        </EditText>
+    </TableRow>
+    
+     
+     <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/passwordTextViewId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/padding_5dp"
+            android:text="@string/password_text_view" />
+
+        <EditText
+            android:id="@+id/passwordSignUpEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:paddingRight="@dimen/padding_5dp" >
+
+            <requestFocus />
+        </EditText>
+    </TableRow>
+    
+     <TableRow
+        android:id="@+id/tableRow4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/emailTextViewId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/padding_5dp"
+            android:text="@string/email_text_view" />
+
+        <EditText
+            android:id="@+id/emailSignUpEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:paddingRight="@dimen/padding_5dp" >
+
+            <requestFocus />
+        </EditText>
+    </TableRow>
+     <Button
+         android:id="@+id/signUpButton"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:onClick="addNewContact"
+         android:paddingLeft="32dp"
+         android:paddingRight="32dp"
+         android:text="@string/signup_data" />
+</TableLayout>    
+
+
+    
+   
+    

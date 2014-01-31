@@ -2,12 +2,9 @@ package org.istic.mmm_likewaze;
 
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 public class GestionAccelerometre {
-
 	
 	public static boolean accelerometrePresent(Context c){
 		

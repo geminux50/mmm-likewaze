@@ -27,4 +27,12 @@
     <string name="title_activity_direction_auto_stop">DirectionAutoStop</string>
 	<string name="msgDirection">Déplacez-vous en direction de votre destination</string>
 	<string name="txtBtnDirection">OK</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="add_user"> user sign up form </string>
+    <string name="pseudo_text_view">pseudo</string>
+    <string name="password_text_view">pass word</string>
+    <string name="email_text_view"> email </string>
+    <string name="signup_data"> sign up</string>
+    <string name="waze_img_desc">waze image</string>
+
 </resources>

@@ -22,7 +22,7 @@ public class MenuDialog extends AlertDialog {
 		params.x = srcBtnLocation[0];
 		params.y = srcBtnLocation[1];
 
-		// Set the origin on the top-left corner
+		// Set the origin on the top-left corner 
 		params.gravity = Gravity.TOP | Gravity.LEFT;
 
 		// Create the View from the layout
