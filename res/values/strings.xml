@@ -19,6 +19,7 @@
     <string name="dialog_call_title">Appeler</string>
     <string name="dialog_main_title">Menu</string>
     <string name="dialog_main_quit">Quitter</string>
+    <string name="dialog_main_switchmode">Changer de mode</string>
     <string name="menu_main_pieton">Menu pour piétons</string>
     <string name="dialog_pieton_title">Signaler</string>
     <string name="menu_pieton_panne">EN PANNE !!!</string>

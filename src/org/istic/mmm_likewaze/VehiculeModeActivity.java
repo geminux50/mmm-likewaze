@@ -1,6 +1,7 @@
 package org.istic.mmm_likewaze;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -101,6 +103,32 @@ public class VehiculeModeActivity extends FragmentActivity implements
 						VehiculeModeActivity.this, R.string.dialog_main_title,
 						btn_menu_main, R.layout.dialog_menu_main);
 				menuDialogMain.show();
+				
+				ViewGroup parentView = (ViewGroup) menuDialogMain
+						.findViewById(R.id.MenuMainRelativeLayout);
+				for (int i = 0; i < parentView.getChildCount(); i++) {
+					View childView = parentView.getChildAt(i);
+					int resID = childView.getId();
+
+					switch (resID) {
+					case R.id.TvSwitchMode:
+						TextView btn = ((TextView) childView);
+						btn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								Intent intent = new Intent(VehiculeModeActivity.this,
+								PietonModeActivity.class);
+								startActivity(intent);
+							}
+						});
+						break;
+
+					default:
+						break;
+					}
+				
+				}
 			}
 		});
 
@@ -296,7 +324,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		currentPosition = new LatLng(location.getLatitude(),
 				location.getLongitude());
 
-		if(currentPosition != null){
+		if(currentPosition != null && lastPosition != null){
 			Location.distanceBetween(	lastPosition.latitude, 
 										lastPosition.longitude, 
 										currentPosition.latitude,
@@ -341,7 +369,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	}
 
 	public void secouage() {
-		//@todoMarc appel à VALID POI
+		//@todoMarc appel ï¿½ VALID POI
 		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!", Toast.LENGTH_SHORT).show();
 		
 		msgBox.show();

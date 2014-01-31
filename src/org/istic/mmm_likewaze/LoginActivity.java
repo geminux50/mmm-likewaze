@@ -84,11 +84,8 @@ public class LoginActivity extends Activity {
 			@Override
 			public void onClick(View view) {
 				// attemptLogin();
-				//Intent intent = new Intent(LoginActivity.this,
-				//		VehiculeModeActivity.class);
 				Intent intent = new Intent(LoginActivity.this,
-				PietonModeActivity.class);
-				intent.putExtra("retourDirec", false);
+						VehiculeModeActivity.class);
 				startActivity(intent);
 
 			}

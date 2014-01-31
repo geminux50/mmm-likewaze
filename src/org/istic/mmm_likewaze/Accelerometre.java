@@ -70,9 +70,7 @@ public class Accelerometre implements SensorEventListener{
  
  
             if (currenForce > FORCE_THRESHOLD) {
- 
                 ((VehiculeModeActivity)appelant).secouage();
- 
             }
             
             last_x = current_x;

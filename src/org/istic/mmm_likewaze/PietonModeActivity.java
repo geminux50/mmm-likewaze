@@ -1,28 +1,34 @@
 package org.istic.mmm_likewaze;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import java.util.ArrayList;
+import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PietonModeActivity extends FragmentActivity implements LocationListener{
 	
@@ -33,73 +39,37 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
      private CameraUpdate camera;
      private LocationManager locationManager;
      private float zoomFactor = 15f;
+
+     // Current position
      private LatLng currentPosition;
-     
-     private float directionDeplacement;
-     private boolean retourDirection = false;
+
+     private ProgressDialog progressDialog;
+ 	 private List<LatLng> history;
+ 	 
+ 	 //bearing
+ 	 private float bearing;
+ 	 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
-		//********************************************************************
-//		// verification de la presence d'un accelerometre sur le device !!!
-//		boolean presenceAccel = GestionAccelerometre.accelerometrePresent(getApplicationContext());
-//		if(!presenceAccel){
-//			String texteMsg = "Votre téléphone ne possede pas d'accéléromètre !!!";
-//			texteMsg += "\n\n";
-//			texteMsg += "Vous ne pouvez pas utiliser le mode 'PANIC'";
-//					
-//			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
-//		}else{
-//			String texteMsg = "Votre téléphone possede un d'accéléromètre !!!";
-//			texteMsg += "\n\n";
-//			texteMsg += "Vous pouvez utiliser le mode 'PANIC'";
-//					
-//			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
-//		}
-//				
-//		Accelerometre acc = new Accelerometre(this);
-//		acc.start();
-		//********************************************************************
-		
-		
-		
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pieton_mode);
-		
-		//récupération de la variable
-		retourDirection = false;
-        Bundle extra = getIntent().getExtras();
-        directionDeplacement = extra.getFloat("Cap");
-        retourDirection = extra.getBoolean("retourDirec");
-        latitude = extra.getDouble("latitude");
-        longitude = extra.getDouble("longitude");
-        
-        //String txt = retourDirection.;
-        
-        Toast.makeText(getApplicationContext(),
-				"-" + retourDirection
-				+ "-" + directionDeplacement
-				+ "-" + latitude
-				+ "-" + longitude, Toast.LENGTH_LONG)
-				.show();
-        
+
 		try {
+			// Initialize the map
 			initilizeMap();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		if(retourDirection){
-			currentPosition = new LatLng(latitude, longitude);
-			placementAutoStop();
-		}
-				
-		final ImageButton btn_zoom_in = (ImageButton) findViewById(R.id.btn_zoom_in);
-		final ImageButton btn_zoom_out = (ImageButton) findViewById(R.id.btn_zoom_out);
+		// Load all buttons
+		final ImageButton btn_zoom_in = (ImageButton) findViewById(R.id.btn_zoom_in_pieton);
+		final ImageButton btn_zoom_out = (ImageButton) findViewById(R.id.btn_zoom_out_pieton);
+		final Button btn_menu_main = (Button) findViewById(R.id.btn_menu_main_pieton);
 		final Button btn_menu_pieton = (Button) findViewById(R.id.btn_menu_pieton);
 		
+		// Actions for the zoom-in button
 		btn_zoom_in.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -111,6 +81,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			}
 		});
 		
+		// Actions for the zoom-out button
 		btn_zoom_out.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -122,6 +93,47 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			}
 		});
 		
+		// Actions for the main menu button
+		btn_menu_main.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+
+				MenuDialog menuDialogMain = new MenuDialog(
+						PietonModeActivity.this, R.string.dialog_main_title,
+						btn_menu_main, R.layout.dialog_menu_main);
+				menuDialogMain.show();
+				
+				ViewGroup parentView = (ViewGroup) menuDialogMain
+						.findViewById(R.id.MenuMainRelativeLayout);
+				for (int i = 0; i < parentView.getChildCount(); i++) {
+					View childView = parentView.getChildAt(i);
+					int resID = childView.getId();
+
+					switch (resID) {
+					case R.id.TvSwitchMode:
+						TextView btn = ((TextView) childView);
+						btn.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								Intent intent = new Intent(PietonModeActivity.this,
+								VehiculeModeActivity.class);
+								startActivity(intent);
+							}
+						});
+						break;
+
+					default:
+						break;
+					}
+				
+				}
+			}
+		});
+		
+		
+		// Actions for the pieton menu button
 		btn_menu_pieton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -142,12 +154,96 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 					switch (resID) {
 					
 					case R.id.BtnAutoStop:
+						final ImageButton btnAutoStop = (ImageButton) childView;
 						
-						((ImageButton) childView).setOnClickListener(new OnClickListener() {
+						btnAutoStop.setOnClickListener(new OnClickListener() {
 							
 							@Override
 							public void onClick(View v) {
-								autoStopAction();																
+																
+								v.setEnabled(false);
+								
+								// initialize history array
+								history = new ArrayList<LatLng>();
+								
+
+
+								// quantity if Geopoint to be able to calculate bearing
+								final int nbOfGeoPts =  2;
+								
+								AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+									
+									@Override
+									protected void onPreExecute() {
+										
+										locationManager.requestLocationUpdates(
+												LocationManager.GPS_PROVIDER, 2000, 10, PietonModeActivity.this);
+										// Create a Dialog with a progress bar which requires 2 Gps points to close itself.
+										progressDialog = new ProgressDialogGps(2,PietonModeActivity.this);
+										progressDialog = new ProgressDialog(PietonModeActivity.this);
+										progressDialog.setMax(nbOfGeoPts);
+										progressDialog.setTitle("Echantillonage GPS");
+										progressDialog.setMessage("Avancer sur une dizaine de mÃ¨tres dans la direction oÃ¹ vous souhaitez aller");
+										progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+										progressDialog.setCancelable(false);
+										progressDialog.setIndeterminate(false);
+										progressDialog.show();
+									}
+										
+									@Override
+									protected Void doInBackground(Void... arg0) {
+										try {
+											// timeout in milliseconds (+/- threadSleep)
+											final int timeout = 20000;
+											
+											// duration in milliseconds between progress status checks
+											final int threadSleep = 2000;
+											
+											// calculated maximum attemps to perform
+											final float attempsMax = timeout/threadSleep;
+											
+											// attemps counter
+											int attempsCnt = 0;
+											
+											while ((progressDialog.getProgress() < progressDialog.getMax()) && (attempsCnt < attempsMax)) {
+												Log.i(this.getClass().getName(),"Check progress:" +progressDialog.getProgress()+ "/" +progressDialog.getMax());
+												Thread.sleep(threadSleep);
+											}
+											
+											try {
+												bearing = getBearing(history);
+												Log.i(PietonModeActivity.class.getName(), String.valueOf(bearing));
+
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+											
+											
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+										return null;
+									}
+									
+									@Override
+									protected void onPostExecute(Void result) {
+										
+										locationManager.requestLocationUpdates(
+												LocationManager.GPS_PROVIDER, 5000, 0, PietonModeActivity.this);
+										// if the progressdialog has not been manualy closed, do it now
+										if (progressDialog!=null) {
+											progressDialog.dismiss();
+											// and re-enable the autostop button
+											btnAutoStop.setEnabled(true);
+										}
+										
+										placementAutoStop(bearing);
+
+									}
+										
+								};
+								task.execute((Void[])null);
+
 							}
 						});
 						break;
@@ -185,14 +281,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
             //initilizeMap();
     }
 
-	private void autoStopAction(){
-				
-		Intent recupDirection = new Intent(this, DirectionAutoStop.class);
-		startActivity(recupDirection);
-		
-		this.finish();	
-	}
-	
+
 	private void panneAction(){
 		Toast.makeText(getApplicationContext(), "panneAction",
 				Toast.LENGTH_SHORT).show();
@@ -212,7 +301,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		// Create the map if it does not exists
 		if (googleMap == null) {
 			googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-					R.id.map)).getMap();
+					R.id.map_pieton)).getMap();
 
 			if (googleMap != null) {
 				// Allow the app to get the current position
@@ -266,9 +355,10 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			}
 		}
 	}
-
+	
 	@Override
 	public void onLocationChanged(Location location) {
+
 		// Get the current position
 		currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
@@ -278,6 +368,19 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		googleMap.moveCamera(camera);
 		googleMap.animateCamera(camera);
 		
+		// If the progressionDialog is visible (from the autostop button), send
+		// it the current location too
+		if (progressDialog != null && progressDialog.isShowing()) {
+			if (history.size() < progressDialog.getMax()) {
+				if (location != null) {
+					history.add(new LatLng(location.getLatitude(), location
+							.getLongitude()));
+					progressDialog.incrementProgressBy(1);
+					Log.i(this.getClass().getName(),
+							"adding a new position to history");
+				}
+			}
+		}	
 	}
 
 	@Override
@@ -297,11 +400,31 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		// TODO Auto-generated method stub
 		
 	}
-
 	
-	public void placementAutoStop(){
+	private float getBearing(List<LatLng> gpsPtsList) throws Exception {
+		float bearing;
+		float[] result = new float[3];
+
+		if (gpsPtsList.size() < 2) {
+			throw new Exception("At least 2 LatLng values are required");
+		} else {
+
+			LatLng firstGpsPt = gpsPtsList.get(0);
+			LatLng lastGpsPt = gpsPtsList.get(gpsPtsList.size() - 1);
+
+			Location.distanceBetween(firstGpsPt.latitude, firstGpsPt.longitude,
+					lastGpsPt.latitude, lastGpsPt.longitude, result);
+
+			bearing = result[1];
+			Log.i(PietonModeActivity.class.getName(), "Return bearing:" + String.valueOf(bearing));
+			return bearing;
+		}
+	}
+	
+	
+	private void placementAutoStop(float bearing){
 		
-		if(directionDeplacement > 22.5 && directionDeplacement < 67.5){
+		if(bearing > 22.5 && bearing < 67.5){
 			// Nord Est
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -310,7 +433,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 67.5 && directionDeplacement < 112.5){
+		if(bearing > 67.5 && bearing < 112.5){
 			// Est
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -319,7 +442,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 112.5 && directionDeplacement < 157.5){
+		if(bearing > 112.5 && bearing < 157.5){
 			// Sud Est
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -328,7 +451,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 157.5 && directionDeplacement < 202.5){
+		if(bearing > 157.5 && bearing < 202.5){
 			// Sud
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -337,7 +460,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 202.5 && directionDeplacement < 247.5){
+		if(bearing > 202.5 && bearing < 247.5){
 			// Sud Ouest
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -346,7 +469,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 247.5 && directionDeplacement < 292.5){
+		if(bearing > 247.5 && bearing < 292.5){
 			// Ouest
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -355,7 +478,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 292.5 && directionDeplacement < 337.5){
+		if(bearing > 292.5 && bearing < 337.5){
 			// Nord Ouest
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -364,7 +487,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(directionDeplacement > 337.5 || directionDeplacement < 22.5){
+		if(bearing > 337.5 || bearing < 22.5){
 			// Nord
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -373,6 +496,9 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
+
+		Toast.makeText(getApplicationContext(), "bearing : " + bearing,
+				Toast.LENGTH_LONG).show();
 	}
 	
 	
