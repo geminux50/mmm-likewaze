@@ -1,4 +1,4 @@
-package com.istic.mmm_likewaze.api.task;
+package org.istic.mmm_likewaze.api.task;
 
 
 import android.os.AsyncTask;

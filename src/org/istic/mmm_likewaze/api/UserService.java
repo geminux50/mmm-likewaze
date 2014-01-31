@@ -1,9 +1,9 @@
-package com.istic.mmm_likewaze.api;
+package org.istic.mmm_likewaze.api;
 
 import java.io.OutputStream;
 import java.util.concurrent.ExecutionException;
 
-import com.istic.mmm_likewaze.model.User;
+import org.istic.mmm_likewaze.model.User;
 
 public interface UserService {
     

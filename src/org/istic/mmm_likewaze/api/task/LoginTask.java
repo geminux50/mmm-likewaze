@@ -1,14 +1,14 @@
-package com.istic.mmm_likewaze.api.task;
+package org.istic.mmm_likewaze.api.task;
 
 import java.util.ArrayList;
+
+import org.istic.mmm_likewaze.model.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.util.Log;
-
-import com.istic.mmm_likewaze.model.User;
 
 public class LoginTask   extends GenericAsynTaskExec  {
 

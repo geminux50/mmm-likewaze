@@ -1,15 +1,15 @@
-package com.istic.mmm_likewaze.remote.controller;
+package org.istic.mmm_likewaze.remote.controller;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import android.util.Log;
+import org.istic.mmm_likewaze.api.PoiService;
+import org.istic.mmm_likewaze.api.task.ALLPoiTask;
+import org.istic.mmm_likewaze.api.task.ServiceHandler;
+import org.istic.mmm_likewaze.api.task.SignalPoiTask;
+import org.istic.mmm_likewaze.model.Poi;
 
-import com.istic.mmm_likewaze.api.PoiService;
-import com.istic.mmm_likewaze.api.task.ALLPoiTask;
-import com.istic.mmm_likewaze.api.task.ServiceHandler;
-import com.istic.mmm_likewaze.api.task.SignalPoiTask;
-import com.istic.mmm_likewaze.model.Poi;
+import android.util.Log;
 
 public class RemotePoiController implements PoiService {
 

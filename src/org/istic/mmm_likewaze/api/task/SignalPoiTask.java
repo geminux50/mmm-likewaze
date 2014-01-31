@@ -1,9 +1,9 @@
-package com.istic.mmm_likewaze.api.task;
+package org.istic.mmm_likewaze.api.task;
+
+import org.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.User;
 
 import android.util.Log;
-
-import com.istic.mmm_likewaze.model.Poi;
-import com.istic.mmm_likewaze.model.User;
 
 /**
  * 

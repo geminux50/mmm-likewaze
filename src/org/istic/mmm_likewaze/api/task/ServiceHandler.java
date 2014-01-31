@@ -1,4 +1,4 @@
-package com.istic.mmm_likewaze.api.task;
+package org.istic.mmm_likewaze.api.task;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -18,13 +18,12 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-
-import com.istic.mmm_likewaze.model.Poi;
-import com.istic.mmm_likewaze.model.User;
 
 public class ServiceHandler {
 

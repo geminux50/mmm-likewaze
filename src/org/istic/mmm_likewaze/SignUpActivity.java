@@ -1,7 +1,7 @@
 package org.istic.mmm_likewaze;
 
-import com.istic.mmm_likewaze.model.User;
-import com.istic.mmm_likewaze.remote.controller.RemoteUserController;
+import org.istic.mmm_likewaze.model.User;
+import org.istic.mmm_likewaze.remote.controller.RemoteUserController;
 
 import android.os.Bundle;
 import android.app.Activity;

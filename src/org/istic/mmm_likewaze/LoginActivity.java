@@ -1,5 +1,8 @@
 package org.istic.mmm_likewaze;
 
+import org.istic.mmm_likewaze.model.User;
+import org.istic.mmm_likewaze.remote.controller.RemoteUserController;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -14,9 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.istic.mmm_likewaze.model.User;
-import com.istic.mmm_likewaze.remote.controller.RemoteUserController;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -85,8 +85,8 @@ public class LoginActivity extends Activity {
 						
 						if( attemptLogin()  == true){
                            Log.i("RESULT LOGIN :", "  login succeded  ! ");
-						//Intent intent = new Intent(LoginActivity.this, VehiculeModeActivity.class);
-					    //startActivity(intent);							
+						Intent intent = new Intent(LoginActivity.this, VehiculeModeActivity.class);
+					    startActivity(intent);							
 						}else{
 							
 							Log.i("RESULT LOGIN:","login failed " );

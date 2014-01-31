@@ -2,6 +2,10 @@ package org.istic.mmm_likewaze;
 
 import java.util.ArrayList;
 
+import org.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.TypePoi;
+import org.istic.mmm_likewaze.remote.controller.RemotePoiController;
+
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,10 +28,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import com.istic.mmm_likewaze.model.Poi;
-import com.istic.mmm_likewaze.model.TypePoi;
-import com.istic.mmm_likewaze.remote.controller.RemotePoiController;
 
 public class VehiculeModeActivity extends FragmentActivity implements
 		LocationListener {

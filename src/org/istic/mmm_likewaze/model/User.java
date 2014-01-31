@@ -1,4 +1,4 @@
-package  com.istic.mmm_likewaze.model;
+package  org.istic.mmm_likewaze.model;
 import java.io.Serializable;
 import java.util.Collection;
 

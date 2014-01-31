@@ -1,13 +1,15 @@
-package com.istic.mmm_likewaze.remote.controller;
+package org.istic.mmm_likewaze.remote.controller;
 
 
 import java.util.concurrent.ExecutionException;
+
+import org.istic.mmm_likewaze.api.UserService;
+import org.istic.mmm_likewaze.api.task.LoginTask;
+import org.istic.mmm_likewaze.api.task.ServiceHandler;
+import org.istic.mmm_likewaze.api.task.SignUpTask;
+import org.istic.mmm_likewaze.model.User;
+
 import android.util.Log;
-import com.istic.mmm_likewaze.api.UserService;
-import com.istic.mmm_likewaze.api.task.LoginTask;
-import com.istic.mmm_likewaze.api.task.ServiceHandler;
-import com.istic.mmm_likewaze.api.task.SignUpTask;
-import com.istic.mmm_likewaze.model.User;
 
 public class RemoteUserController    implements UserService   {
 

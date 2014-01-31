@@ -1,4 +1,4 @@
-package com.istic.mmm_likewaze.remote.controller;
+package org.istic.mmm_likewaze.remote.controller;
 
 public class ServerURL {
 

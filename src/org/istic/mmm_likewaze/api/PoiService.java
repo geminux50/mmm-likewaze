@@ -1,8 +1,8 @@
-package com.istic.mmm_likewaze.api;
+package org.istic.mmm_likewaze.api;
 
 import java.util.ArrayList;
 
-import com.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.Poi;
 
 public interface PoiService {
 

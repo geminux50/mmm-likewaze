@@ -1,17 +1,16 @@
-package com.istic.mmm_likewaze.api.task;
+package org.istic.mmm_likewaze.api.task;
 
 import java.util.ArrayList;
 
+import org.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.TypePoi;
+import org.istic.mmm_likewaze.model.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.util.Log;
-
-import com.istic.mmm_likewaze.model.Poi;
-import com.istic.mmm_likewaze.model.TypePoi;
-import com.istic.mmm_likewaze.model.User;
 public class ALLPoiTask  extends GenericAsynTaskExec{
 
 	

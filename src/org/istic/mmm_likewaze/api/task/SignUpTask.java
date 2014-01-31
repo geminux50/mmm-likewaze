@@ -1,12 +1,11 @@
-package com.istic.mmm_likewaze.api.task;
+package org.istic.mmm_likewaze.api.task;
 
+import org.istic.mmm_likewaze.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.util.Log;
-
-import com.istic.mmm_likewaze.model.User;
 
 
 /**
