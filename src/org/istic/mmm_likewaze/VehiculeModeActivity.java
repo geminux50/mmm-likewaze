@@ -1,10 +1,12 @@
 package org.istic.mmm_likewaze;
 
+import android.app.AlertDialog;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
@@ -25,14 +27,35 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 	// Google Map
 	private GoogleMap googleMap;
-	private LatLng currentPosition;
+	private LatLng currentPosition = null, lastPosition = null;
+	private long currentTime = 0, lastTime = 0;
 	private LocationManager locationManager;
 	private CameraUpdate camera;
 	private float zoomFactor = 18f;
+	private double vitesse;
+	private AlertDialog msgBox;
+	
+	static final int TIME_OUT = 15000;
+    static final int MSG_DISMISS_DIALOG = 0;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// verification de la presence d'un accelerometre sur le device !!!
+		boolean presenceAccel = GestionAccelerometre.accelerometrePresent(getApplicationContext());
+		if(!presenceAccel){
+			String texteMsg = "Votre telephone ne possede pas d'accelerometre !!!";
+			texteMsg += "\n\n";
+			texteMsg += "Vous ne pouvez pas utiliser le mode 'PANIC'";
+
+			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
+		}
+
+		Accelerometre acc = new Accelerometre(this);
+		acc.start();
+
 		setContentView(R.layout.activity_vehicule_mode);
 		try {
 			// Initialize the map
@@ -53,6 +76,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		btn_zoom_in.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				camera = CameraUpdateFactory.zoomIn();
+				
 				googleMap.moveCamera(camera);
 				googleMap.animateCamera(camera);
 			}
@@ -177,6 +201,8 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 		});
 
+		createDialog();
+		
 	}
 
 	/**
@@ -258,11 +284,40 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	@Override
 	public void onLocationChanged(Location location) {
 		// Get the current position
+		float[] result = new float[3];
+		lastTime = currentTime;
+		currentTime = System.currentTimeMillis();
+		long diffTime = (currentTime - lastTime);
+        		
+		if(currentPosition != null){
+			lastPosition = currentPosition;
+		}
+		
 		currentPosition = new LatLng(location.getLatitude(),
 				location.getLongitude());
 
+		if(currentPosition != null){
+			Location.distanceBetween(	lastPosition.latitude, 
+										lastPosition.longitude, 
+										currentPosition.latitude,
+										currentPosition.longitude,
+										result);
+			
+			
+			vitesse = (result[0] * 1000 / diffTime)/3.6;
+			
+			//@todoMarc 
+			Toast.makeText(getApplicationContext(), 
+					"vitesse = " + vitesse + " km/h", 
+					Toast.LENGTH_SHORT).show();
+		}
+		
+		
+		
+		
 		// Camera follow the new position
-		camera = CameraUpdateFactory.newLatLngZoom(currentPosition, zoomFactor);
+		//@ModifMarc
+		camera = CameraUpdateFactory.newLatLng(currentPosition);
 		googleMap.moveCamera(camera);
 		googleMap.animateCamera(camera);
 	}
@@ -285,4 +340,38 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 	}
 
+	public void secouage() {
+		//@todoMarc appel à VALID POI
+		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!", Toast.LENGTH_SHORT).show();
+		
+		msgBox.show();
+		mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, TIME_OUT);
+	}
+	
+	private void createDialog() {
+        
+		AlertDialog.Builder msgBoxBuilder = new AlertDialog.Builder(this);
+		msgBoxBuilder.setMessage("ENVOYER UNE ALERTE ?");
+		msgBoxBuilder.setPositiveButton("OUI !!!", null);
+        
+		msgBox = msgBoxBuilder.create();
+       
+    }
+
+	private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+            case MSG_DISMISS_DIALOG:
+                if (msgBox != null && msgBox.isShowing()) {
+                	msgBox.dismiss();
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+    };
+
+	
 }
