@@ -36,23 +36,24 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	private float zoomFactor = 18f;
 	private double vitesse;
 	private AlertDialog msgBox;
-	
-	static final int TIME_OUT = 15000;
-    static final int MSG_DISMISS_DIALOG = 0;
 
+	static final int TIME_OUT = 15000;
+	static final int MSG_DISMISS_DIALOG = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// verification de la presence d'un accelerometre sur le device !!!
-		boolean presenceAccel = GestionAccelerometre.accelerometrePresent(getApplicationContext());
-		if(!presenceAccel){
+		boolean presenceAccel = GestionAccelerometre
+				.accelerometrePresent(getApplicationContext());
+		if (!presenceAccel) {
 			String texteMsg = "Votre telephone ne possede pas d'accelerometre !!!";
 			texteMsg += "\n\n";
 			texteMsg += "Vous ne pouvez pas utiliser le mode 'PANIC'";
 
-			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), texteMsg, Toast.LENGTH_LONG)
+					.show();
 		}
 
 		Accelerometre acc = new Accelerometre(this);
@@ -78,7 +79,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		btn_zoom_in.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				camera = CameraUpdateFactory.zoomIn();
-				
 				googleMap.moveCamera(camera);
 				googleMap.animateCamera(camera);
 			}
@@ -103,7 +103,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 						VehiculeModeActivity.this, R.string.dialog_main_title,
 						btn_menu_main, R.layout.dialog_menu_main);
 				menuDialogMain.show();
-				
 				ViewGroup parentView = (ViewGroup) menuDialogMain
 						.findViewById(R.id.MenuMainRelativeLayout);
 				for (int i = 0; i < parentView.getChildCount(); i++) {
@@ -117,8 +116,9 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 							@Override
 							public void onClick(View v) {
-								Intent intent = new Intent(VehiculeModeActivity.this,
-								PietonModeActivity.class);
+								Intent intent = new Intent(
+										VehiculeModeActivity.this,
+										PietonModeActivity.class);
 								startActivity(intent);
 							}
 						});
@@ -127,7 +127,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					default:
 						break;
 					}
-				
 				}
 			}
 		});
@@ -230,7 +229,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		});
 
 		createDialog();
-		
+
 	}
 
 	/**
@@ -345,6 +344,29 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		
 		// Camera follow the new position
 		//@ModifMarc
+
+		if (currentPosition != null) {
+			lastPosition = currentPosition;
+		}
+
+		currentPosition = new LatLng(location.getLatitude(),
+				location.getLongitude());
+
+		if (currentPosition != null && lastPosition != null) {
+			Location.distanceBetween(lastPosition.latitude,
+					lastPosition.longitude, currentPosition.latitude,
+					currentPosition.longitude, result);
+
+			vitesse = (result[0] * 1000 / diffTime) / 3.6;
+
+			// @todoMarc
+			Toast.makeText(getApplicationContext(),
+					"vitesse = " + vitesse + " km/h", Toast.LENGTH_SHORT)
+					.show();
+		}
+
+		// Camera follow the new position
+		// @ModifMarc
 		camera = CameraUpdateFactory.newLatLng(currentPosition);
 		googleMap.moveCamera(camera);
 		googleMap.animateCamera(camera);
@@ -365,41 +387,41 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-
+	
 	}
 
 	public void secouage() {
-		//@todoMarc appel � VALID POI
-		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!", Toast.LENGTH_SHORT).show();
-		
+		// @todoMarc appel � VALID POI
+		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!",
+				Toast.LENGTH_SHORT).show();
+
 		msgBox.show();
 		mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, TIME_OUT);
 	}
-	
+
 	private void createDialog() {
-        
+
 		AlertDialog.Builder msgBoxBuilder = new AlertDialog.Builder(this);
 		msgBoxBuilder.setMessage("ENVOYER UNE ALERTE ?");
 		msgBoxBuilder.setPositiveButton("OUI !!!", null);
-        
+
 		msgBox = msgBoxBuilder.create();
-       
-    }
+
+	}
 
 	private Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-            case MSG_DISMISS_DIALOG:
-                if (msgBox != null && msgBox.isShowing()) {
-                	msgBox.dismiss();
-                }
-                break;
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case MSG_DISMISS_DIALOG:
+				if (msgBox != null && msgBox.isShowing()) {
+					msgBox.dismiss();
+				}
+				break;
 
-            default:
-                break;
-            }
-        }
-    };
+			default:
+				break;
+			}
+		}
+	};
 
-	
 }
