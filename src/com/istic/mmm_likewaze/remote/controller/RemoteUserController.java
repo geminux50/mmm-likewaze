@@ -45,7 +45,7 @@ public class RemoteUserController    implements UserService   {
 	}
 
 	@Override
-	public void signUp(User  us) {
+	public User signUp(User  us) {
 		
       Log.i(" R-User-Controller","  trying to singUp the user ..... ");
 		 
@@ -55,7 +55,7 @@ public class RemoteUserController    implements UserService   {
 		 suptsk.setUser(us);
 		 suptsk.execute(); 
 		 try {
-			 suptsk.get();   //  wait till obtaining the response from the server 
+			   suptsk.get();   //  wait till obtaining the response from the server 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -63,7 +63,7 @@ public class RemoteUserController    implements UserService   {
 			}  
 		 
 		 Log.i(" R-User-Controller","  END of  singUp the user ..... ");
-		
+		return suptsk.getSignedUpUser();
 	}
 
 }

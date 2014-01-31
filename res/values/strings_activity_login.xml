@@ -15,6 +15,6 @@
     <string name="error_field_required">This field is required</string>
     <string name="login_message">  Login : </string>
     <string name="waze_message"> Get The Best Route , Every Day !</string>
-    <string name="sign_up_message"> Don\'t have an account ? Sign up Now</string>
-
+    <string name="sign_up_message">  Sign up Now</string>
+    <string name="no_account_message">Don\'t have an account ? </string>
 </resources>

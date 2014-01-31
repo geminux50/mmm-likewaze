@@ -59,6 +59,10 @@
             android:name="org.istic.mmm_likewaze.TestJson"
             android:label="@string/title_activity_test_json" >
         </activity>
+        <activity
+            android:name="org.istic.mmm_likewaze.SignUpActivity"
+            android:label="@string/title_activity_sign_up" >
+        </activity>
     </application>
 
 </manifest>

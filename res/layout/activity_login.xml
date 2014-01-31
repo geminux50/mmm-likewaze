@@ -54,6 +54,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
+                android:contentDescription="@string/waze_img_desc"
                 android:src="@drawable/waze" />
 
             <TextView
@@ -95,12 +96,20 @@
                 android:background="@color/blue_light"
                 android:text="@string/action_sign_in_register" />
             <TextView
-                android:id="@+id/sign_up_message_id"
+                android:id="@+id/on_account_message_id"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                  android:layout_marginTop="50dp"
-                android:text="@string/sign_up_message"
+                android:text="@string/no_account_message"
                 />
+            <TextView
+                android:id="@+id/sign_up_smessage_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/sign_up_message"
+                android:textColor="@color/blue_light"
+                />
+            
             
         </LinearLayout>
 

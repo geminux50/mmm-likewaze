@@ -68,9 +68,9 @@ public class UserController  implements UserService {
 		return null;
 	}
 	@Override
-	public void signUp(User usr) {
+	public User signUp(User usr) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 

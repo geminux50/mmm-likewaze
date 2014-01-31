@@ -9,7 +9,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_ihmap">IHmap</string>
     <string name="title_activity_test_json">TestJson</string>
-    
     <string name="menu_main">Menu</string>
     <string name="menu_poi">Signaler</string>
     <string name="menu_appel">Appels</string>
@@ -22,5 +21,12 @@
     <string name="dialog_call_title">Appeler</string>
     <string name="dialog_main_title">Menu</string>
     <string name="dialog_main_quit">Quitter</string>
-    
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="add_user"> user sign up form </string>
+    <string name="pseudo_text_view">pseudo</string>
+    <string name="password_text_view">pass word</string>
+    <string name="email_text_view"> email </string>
+    <string name="signup_data"> sign up</string>
+    <string name="waze_img_desc">waze image</string>
+
 </resources>

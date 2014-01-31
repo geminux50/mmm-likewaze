@@ -23,7 +23,7 @@ public class TestJson extends Activity {
 		
 		Log.i("OPERATION "," call  Signal  a Poi");
 		
-		RemotePoiController  poicntrl = new RemotePoiController();
+		/*RemotePoiController  poicntrl = new RemotePoiController();
 		Poi po= new Poi();
 		po.setCurLat(48.08441);
 		po.setCurLong(-1.691246);
@@ -33,7 +33,7 @@ public class TestJson extends Activity {
 	     	
 	    poicntrl.addPoi(po);
 	    
-		Log.i("OPERATION "," end of  call  Signal  a Poi");
+		Log.i("OPERATION "," end of  call  Signal  a Poi");*/
 		
 		/*Log.i("OPERATION:","Calling the user controller  remote  to sign up  " );
 		RemoteUserController usrcntrl = new RemoteUserController();

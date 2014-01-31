@@ -97,12 +97,23 @@ public class LoginActivity extends Activity {
 				
 				);
 		
+		TextView textView_signup = (TextView) this.findViewById(R.id.sign_up_smessage_id);
+		textView_signup.setOnClickListener(
+				
+				new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+					    startActivity(intent);
+						
+						}}	
+	
+				);
+		
 		_usrcntrl = new RemoteUserController();
 			
 		//  To delate later
 	
-		Intent intent = new Intent(LoginActivity.this, TestJson.class);
-	    startActivity(intent);	
 		
 	}
 
@@ -112,7 +123,8 @@ public class LoginActivity extends Activity {
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
 	}
-
+ 
+	
 	
 	/**
 	 * 

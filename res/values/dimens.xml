@@ -4,5 +4,5 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="font_size_waze">18dp</dimen>
-
+     <dimen name="padding_5dp">5dp</dimen>
 </resources>
