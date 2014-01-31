@@ -178,8 +178,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 										
 										locationManager.requestLocationUpdates(
 												LocationManager.GPS_PROVIDER, 2000, 10, PietonModeActivity.this);
-										// Create a Dialog with a progress bar which requires 2 Gps points to close itself.
-										progressDialog = new ProgressDialogGps(2,PietonModeActivity.this);
+										// Create a Dialog with a progress bar
 										progressDialog = new ProgressDialog(PietonModeActivity.this);
 										progressDialog.setMax(nbOfGeoPts);
 										progressDialog.setTitle("Echantillonage GPS");
