@@ -423,7 +423,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 	
 	private void placementAutoStop(float bearing){
 		
-		if(bearing > 22.5 && bearing < 67.5){
+		if(bearing >= -67.5 && bearing < -22.5){
 			// Nord Est
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -432,7 +432,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 67.5 && bearing < 112.5){
+
+		if(bearing >= -112.5 && bearing < -67.5){
 			// Est
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -441,7 +442,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 112.5 && bearing < 157.5){
+
+		if(bearing >= -157.5 && bearing < -112.5){
 			// Sud Est
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -450,7 +452,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 157.5 && bearing < 202.5){
+
+		if(bearing >= 157.5 && bearing < -157.5){
 			// Sud
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -459,7 +462,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 202.5 && bearing < 247.5){
+
+		if(bearing >= 112.5 && bearing < 157.5){
 			// Sud Ouest
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -468,7 +472,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 247.5 && bearing < 292.5){
+
+		if(bearing >= 67.5 && bearing < 112.5){
 			// Ouest
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -477,7 +482,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 292.5 && bearing < 337.5){
+
+		if(bearing >= 22.5 && bearing < 67.5){
 			// Nord Ouest
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
@@ -486,7 +492,8 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			//TODO envoi d'un POI
 			
 		}
-		if(bearing > 337.5 || bearing < 22.5){
+
+		if(bearing >= -22.5 || bearing < 22.5){
 			// Nord
 			googleMap.addMarker(new MarkerOptions().
 					position(currentPosition).
