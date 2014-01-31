@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MenuMainRelativeLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    tools:context=".VehiculeModeActivity" >
+    android:orientation="horizontal">
+<!--     tools:context=".VehiculeModeActivity"  -->
 
     <TextView
-        android:id="@+id/TvQuit"
+        android:id="@+id/TvSwitchMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/quit_96_noborder_white"  
+        android:drawableLeft="@drawable/auto_stop_96"
         android:gravity="center"
         android:paddingRight="8dp"
-        android:text="@string/dialog_main_quit"
+        android:text="@string/dialog_main_switchmode"
         android:textSize="18sp" />
+
+<!--     Android best practices : No exit system, let the OS handle the lifecycle-->
+<!--     <TextView -->
+<!--         android:id="@+id/TvQuit" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_below="@+id/TvSwitchMode" -->
+<!--         android:drawableLeft="@drawable/quit_96_noborder_white" -->
+<!--         android:gravity="center" -->
+<!--         android:paddingRight="8dp" -->
+<!--         android:text="@string/dialog_main_quit" -->
+<!--         android:textSize="18sp" /> -->
 
 </RelativeLayout>

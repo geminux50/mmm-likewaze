@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">LikeWaze</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_vehicule_mode">VehiculeModeActivity</string>
+    <string name="title_activity_pieton_mode">PietonModeActivity</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_main">Menu</string>
@@ -19,5 +19,12 @@
     <string name="dialog_call_title">Appeler</string>
     <string name="dialog_main_title">Menu</string>
     <string name="dialog_main_quit">Quitter</string>
-
+    <string name="dialog_main_switchmode">Changer de mode</string>
+    <string name="menu_main_pieton">Menu pour piétons</string>
+    <string name="dialog_pieton_title">Signaler</string>
+    <string name="menu_pieton_panne">EN PANNE !!!</string>
+    <string name="menu_pieton_autostop">Auto-Stop</string>
+    <string name="title_activity_direction_auto_stop">DirectionAutoStop</string>
+	<string name="msgDirection">Déplacez-vous en direction de votre destination</string>
+	<string name="txtBtnDirection">OK</string>
 </resources>
