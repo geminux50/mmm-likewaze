@@ -1,10 +1,12 @@
 package org.istic.mmm_likewaze;
 
+import android.app.AlertDialog;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
@@ -31,6 +33,11 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	private CameraUpdate camera;
 	private float zoomFactor = 18f;
 	private double vitesse;
+	private AlertDialog msgBox;
+	
+	static final int TIME_OUT = 15000;
+    static final int MSG_DISMISS_DIALOG = 0;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +201,8 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 		});
 
+		createDialog();
+		
 	}
 
 	/**
@@ -331,9 +340,38 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 	}
 
-	public void secouage(){
+	public void secouage() {
 		//@todoMarc appel à VALID POI
 		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!", Toast.LENGTH_SHORT).show();
+		
+		msgBox.show();
+		mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, TIME_OUT);
 	}
+	
+	private void createDialog() {
+        
+		AlertDialog.Builder msgBoxBuilder = new AlertDialog.Builder(this);
+		msgBoxBuilder.setMessage("ENVOYER UNE ALERTE ?");
+		msgBoxBuilder.setPositiveButton("OUI !!!", null);
+        
+		msgBox = msgBoxBuilder.create();
+       
+    }
+
+	private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+            case MSG_DISMISS_DIALOG:
+                if (msgBox != null && msgBox.isShowing()) {
+                	msgBox.dismiss();
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+    };
+
 	
 }
