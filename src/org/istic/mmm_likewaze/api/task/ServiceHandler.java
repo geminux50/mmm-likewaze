@@ -87,9 +87,10 @@ public class ServiceHandler {
 				url += "?" + paramString;
 			}
 			HttpGet httpGet = new HttpGet(url);
-
+            Log.i(" INSIDE Service handler : "," befor http execute");
 			httpResponse = httpClient.execute(httpGet);
-
+			Log.i(" INSIDE Service handler : "," after http execute");
+			
 			httpEntity = httpResponse.getEntity();
 			response = EntityUtils.toString(httpEntity);
 
@@ -98,6 +99,8 @@ public class ServiceHandler {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (Exception e){
 			e.printStackTrace();
 		}
 

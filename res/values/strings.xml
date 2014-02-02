@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">LikeWaze</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -25,8 +26,8 @@
     <string name="menu_pieton_panne">EN PANNE !!!</string>
     <string name="menu_pieton_autostop">Auto-Stop</string>
     <string name="title_activity_direction_auto_stop">DirectionAutoStop</string>
-	<string name="msgDirection">Déplacez-vous en direction de votre destination</string>
-	<string name="txtBtnDirection">OK</string>
+    <string name="msgDirection">Déplacez-vous en direction de votre destination</string>
+    <string name="txtBtnDirection">OK</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="add_user"> user sign up form </string>
     <string name="pseudo_text_view">pseudo</string>
@@ -34,5 +35,8 @@
     <string name="email_text_view"> email </string>
     <string name="signup_data"> sign up</string>
     <string name="waze_img_desc">waze image</string>
+    <string name="del_all_pois"> RESET POI s</string>
+    <string name="load_all_pois"> GET POI s</string>
+    <string name="title_activity_test_activity">Test_activity</string>
 
 </resources>

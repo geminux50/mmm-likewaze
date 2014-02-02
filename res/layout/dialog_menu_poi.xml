@@ -9,12 +9,58 @@
     android:rowCount="2"
     tools:context=".VehiculeModeActivity" >
 
-    <ImageButton
+    <!--  <ImageButton
         android:id="@+id/BtnRadar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/pressed_96"
         android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/radar_96" />
+        android:src="@drawable/radar_96" />  -->
+    <ImageButton
+        android:id="@+id/BtnPolice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/police" />
+     <ImageButton
+        android:id="@+id/Btnhazard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/hazard" />
 
+      <ImageButton
+        android:id="@+id/BtntrafficJam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/trafficjam" />
+     
+       <ImageButton
+        android:id="@+id/BtnAccident"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/accident" />
+       
+        <ImageButton
+        android:id="@+id/BtnSpeedCam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/speedcam" />
+        
+        
+        <!-- <ImageButton
+        android:id="@+id/BtnWaterDrops"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96"
+        android:contentDescription="@string/zoom_out_description"
+        android:src="@drawable/waterdrops" /> -->
 </GridLayout>

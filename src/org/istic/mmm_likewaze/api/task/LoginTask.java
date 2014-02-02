@@ -19,7 +19,8 @@ public class LoginTask   extends GenericAsynTaskExec  {
 
         String jsonStr = sh.makeServiceCallGET(_url_Query, null);
         Log.d("Response: ", "> " + jsonStr);
-
+        if(jsonStr==null) {  _resLogin=null; return  null; }
+    	
         JSONTokener tokener = new JSONTokener(jsonStr);
         try {
 			        JSONObject jsonObject= new JSONObject(tokener);

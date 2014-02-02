@@ -33,6 +33,9 @@ public class SignUpTask   extends GenericAsynTaskExec{
 		 ServiceHandler sh = new ServiceHandler();
 		 String jsonStr= sh.makeServiceCallPost(_url_Query,_userToSignUp);
 		 Log.d("Response  of post : ", "> " + jsonStr);
+		 if( jsonStr==null) { _userSignedUp=null;
+     	 return  null; }
+		 
 		 JSONTokener tokener = new JSONTokener(jsonStr);
 	        try {
 				        JSONObject jsonObject= new JSONObject(tokener);

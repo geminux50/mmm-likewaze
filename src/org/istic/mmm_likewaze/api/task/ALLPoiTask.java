@@ -35,12 +35,13 @@ public class ALLPoiTask  extends GenericAsynTaskExec{
 		            if(jsonObject !=null){
 		            	///Log.i("Obj User: "," :"+jsonObject.get("pseudo")+" -- v:"+jsonObject.get("passwd") );
 		            	Poi currPOI = new Poi();
-		            	//currPOI.setIdGpsPts(Integer.parseInt(jsonObject.get("idGpsPts").toString()));
+		            	currPOI.setIdpoi(Long.parseLong(jsonObject.get("idpoi").toString()));
 		            	currPOI.setCurLat(Double.parseDouble(jsonObject.get("curLat").toString()));
 		            	currPOI.setCurLong(Double.parseDouble(jsonObject.get("curLong").toString()));
 		            	currPOI.setLabel(jsonObject.get("label").toString());
 		            	currPOI.setType(getPoiTypeEquivalent(jsonObject.get("type").toString()));
 		            	_poiList.add(currPOI);
+		            	 Log.d(" ******  This poi id is : ", "> " + currPOI.getIdpoi());
 		            }
 		           
 		        }
@@ -63,13 +64,8 @@ public class ALLPoiTask  extends GenericAsynTaskExec{
 	
 	private TypePoi getPoiTypeEquivalent(String value){
 		
-		//ACCIDENT,POLICE,FLOOD,FIRE,TRAFFICJAM; 
-		if(value.equals("ACCIDENT"))  return TypePoi.ACCIDENT;
-		if(value.equals("POLICE"))  return TypePoi.POLICE;
-		if(value.equals("FLOOD"))  return TypePoi.FLOOD;
-		if(value.equals("FIRE"))  return TypePoi.FIRE;
-		if(value.equals("TRAFFICJAM"))  return TypePoi.TRAFFICJAM;
-		if(value.equals("USER"))  return TypePoi.USER;
-		return TypePoi.NULLTYPE;
+		TypePoi resp = String2Poi.getPoiTypeEquivalent(value); 
+		if ( resp== null )   return TypePoi.NULLTYPE;
+		else return resp;
 	}
 }

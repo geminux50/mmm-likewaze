@@ -11,6 +11,12 @@ import org.istic.mmm_likewaze.model.User;
 
 import android.util.Log;
 
+/**
+ *   User  services
+ *   
+ * @author me
+ *
+ */
 public class RemoteUserController    implements UserService   {
 
 	
@@ -26,7 +32,6 @@ public class RemoteUserController    implements UserService   {
 		 
 		 
 		 LoginTask logtsk = new LoginTask();
-		 //logtsk.setUrlQuery("http://1-dot-likewize-m2gl.appspot.com/rest/user/login/"+pseudo+"/"+passwd); oldone
 		 logtsk.setUrlQuery(ServerURL.server_url+"/rest/user/oplogin/"+pseudo+"/"+passwd);
 		 logtsk.setOperation(ServiceHandler.GET);
 		 logtsk.execute(); 

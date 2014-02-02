@@ -1,9 +1,16 @@
 package org.istic.mmm_likewaze;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.istic.mmm_likewaze.model.Poi;
+import org.istic.mmm_likewaze.model.TypePoi;
+import org.istic.mmm_likewaze.remote.controller.RemotePoiController;
+
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -26,11 +33,13 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class PietonModeActivity extends FragmentActivity implements LocationListener{
+public class PietonModeActivity extends FragmentActivity implements LocationListener,OnMarkerClickListener {
 	
 	 double latitude;
      double longitude;
@@ -49,7 +58,14 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
  	 //bearing
  	 private float bearing;
  	 
-	
+     //  Poi service
+ 	RemotePoiController  _poicntrl = new RemotePoiController();
+   
+ 	private Long _myLocationPoi;
+ 	 
+    //  A List of markers (Poi ) which  are present  the map 
+ 	private HashMap<Marker, Long> _liMarkersPois = new HashMap<Marker, Long>();
+ 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -59,6 +75,9 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		try {
 			// Initialize the map
 			initilizeMap();
+			// set the marker listener
+			
+			googleMap.setOnMarkerClickListener(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -123,12 +142,59 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 							}
 						});
 						break;
+					 case R.id.DeleteAllPoisId:
+							
+                  	   setBtnDeleteAllPoisAction((TextView) childView);
+						
+						break;
+						
+                     case R.id.LoadAllPoisId:
+ 						
+                  	   setBtnLoadAllPoisAction((TextView) childView);
+						
+						break;	
 
 					default:
 						break;
 					}
 				
 				}
+			}
+			
+			
+			private void setBtnDeleteAllPoisAction(TextView btn) {
+
+				btn.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						Toast.makeText(getApplicationContext(), " delete all pois actions",
+								Toast.LENGTH_SHORT).show();
+						
+						clearAllMarkersREQ();
+						
+
+					}
+				});
+
+			}
+			
+			private void setBtnLoadAllPoisAction(TextView btn) {
+
+				btn.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						Toast.makeText(getApplicationContext(), " load all pois actions",
+								Toast.LENGTH_SHORT).show();
+						
+						loaddAllPOIREQ();  // load all pois from server
+						
+
+					}
+				});
 			}
 		});
 		
@@ -280,20 +346,24 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
             //initilizeMap();
     }
 
-
-	private void panneAction(){
-		Toast.makeText(getApplicationContext(), "panneAction",
-				Toast.LENGTH_SHORT).show();
+	@Override
+	public boolean onMarkerClick(final Marker marker){
 		
-		LatLng pannePosition = currentPosition;
 		
-		googleMap.addMarker(new MarkerOptions().
-								position(pannePosition).
-								icon(BitmapDescriptorFactory.fromResource(R.drawable.panne_96)));
+		if(_liMarkersPois.containsKey(marker)){
+			
+			Toast.makeText(getApplicationContext(),
+					"Marker found : ,"+_liMarkersPois.get(marker) +" please wait ..", Toast.LENGTH_LONG)
+					.show();
+			clearAPoiREQ(_liMarkersPois.get(marker));
+		}else{
+			
+		}
 		
-		//TODO envoi d'un POI
-		
+		return true;
 	}
+
+	
 
 	private void initilizeMap() {
 
@@ -420,86 +490,92 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 		}
 	}
 	
+	/**
+	 *  The processing of a Panne 
+	 */
+	private void panneAction(){
+		Toast.makeText(getApplicationContext(), "panneAction",
+				Toast.LENGTH_SHORT).show();
+		currentPosition = getMyCurrentLocation();
+		LatLng pannePosition = currentPosition;
+		
+		Marker m = googleMap.addMarker(new MarkerOptions().
+								position(pannePosition).
+								icon(BitmapDescriptorFactory.fromResource(R.drawable.panne_96)));
+		addThisPoiREQ(currentPosition,TypePoi.NULLTYPE,m); //  null type to respresent Panne ^^
+		
+	}
 	
+	/**
+	 *   Processing of Auto stope action 
+	 * @param bearing : direction ! 
+	 */
 	private void placementAutoStop(float bearing){
 		
 		if(bearing >= -67.5 && bearing < -22.5){
-			// Nord Est
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.nordest)));
-
-			//TODO envoi d'un POI
-			
+			//NORD EAST
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.nordest)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_NE,m);
 		}
 
 		if(bearing >= -112.5 && bearing < -67.5){
-			// Est
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.est)));
-
-			//TODO envoi d'un POI
+			//EAST
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.est)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_E,m);
 			
 		}
 
 		if(bearing >= -157.5 && bearing < -112.5){
-			// Sud Est
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.sudest)));
-
-			//TODO envoi d'un POI
-			
+			// SOUTH EAST
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.sudest)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_SE,m);
 		}
 
 		if(bearing >= 157.5 && bearing < -157.5){
-			// Sud
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.sud)));
-
-			//TODO envoi d'un POI
-			
+			// SOUTH
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.sud)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_S,m);
 		}
 
 		if(bearing >= 112.5 && bearing < 157.5){
-			// Sud Ouest
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.sudouest)));
-
-			//TODO envoi d'un POI
-			
+			// SOUTH WEST
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.sudouest)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_SW,m);
 		}
 
 		if(bearing >= 67.5 && bearing < 112.5){
-			// Ouest
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.ouest)));
-
-			//TODO envoi d'un POI
-			
+			// WEST
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.ouest)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_W,m);
 		}
 
 		if(bearing >= 22.5 && bearing < 67.5){
-			// Nord Ouest
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.nordouest)));
-
-			//TODO envoi d'un POI
+			// NORD WEST
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.nordouest)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_NW,m);
 			
 		}
 
 		if(bearing >= -22.5 || bearing < 22.5){
-			// Nord
-			googleMap.addMarker(new MarkerOptions().
-					position(currentPosition).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.nord)));
-
-			//TODO envoi d'un POI
+			// NORD
+			Marker m = googleMap.addMarker(new MarkerOptions().
+					  position(currentPosition).
+					  icon(BitmapDescriptorFactory.fromResource(R.drawable.nord)));
+			addThisPoiREQ(currentPosition,TypePoi.PIETON_N,m);
 			
 		}
 
@@ -507,5 +583,144 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 				Toast.LENGTH_LONG).show();
 	}
 	
+	/**
+	 *    Clear the markers from the map. this has a local effect 
+	 *     To delete a spacific marker (poi)  for all the community 
+	 *     right click on the marker ...  you will be guided don't worry ^^
+	 */
+	public void clearAllMarkersREQ(){
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(" Do you want to delete all POI s ?");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            	Toast.makeText(getApplicationContext(),
+						"Yes delete ", Toast.LENGTH_LONG)
+						.show();
+                dialog.cancel();
+                _liMarkersPois.clear();
+                googleMap.clear();
+            }
+        });
+        builder1.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            	Toast.makeText(getApplicationContext(),
+						"No delete ", Toast.LENGTH_LONG)
+						.show();
+                dialog.cancel();
+                
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+		//
+	}
+	
+	/**
+	 *   Request to the server to add this poi
+	 * @param pos  : position of the poi to be added 
+	 * @param type : type of the poi to add
+	 */
+	public void addThisPoiREQ(LatLng pos,TypePoi type,Marker m ){
+		
+		Toast.makeText(getApplicationContext(), "add Marker: "+type+" ,  "+
+				pos.latitude+" - "+pos.longitude,
+				Toast.LENGTH_SHORT).show();
+		
+		Poi po = new Poi();
+		po.setCurLat(pos.latitude);po.setCurLong(pos.longitude);
+		po.setType(type);
+		po.setLabel(type+"  label");
+		// call the service to add poi
+		Poi p =_poicntrl.addPoi(po);
+		if(p !=  null){
+			if(_liMarkersPois== null)  _liMarkersPois= new HashMap<Marker,Long>();
+			_liMarkersPois.put(m, p.getIdpoi());
+		}
+		
+	}
+	
+	/**
+	 * Clear a poi from the map
+	 * 
+	 * @param poid : the poi identifier 
+	 */
+	public void clearAPoiREQ(final Long poid){
+		
+		
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(" Do you want to delete this POI s "+poid+"?");
+        builder1.setCancelable(true);
+        builder1.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            	Toast.makeText(getApplicationContext(),
+						"Yes delete ", Toast.LENGTH_LONG)
+						.show();
+                dialog.cancel();
+                // MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
+           
+                 Long idPoiToDelete = poid;
+                 _poicntrl.deletePoi(idPoiToDelete);
+                 googleMap.clear();
+                _liMarkersPois.clear();
+               // populateTheMapWithPoi(googleMap);
+            }
+        });
+        builder1.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            	Toast.makeText(getApplicationContext(),
+						"No delete ", Toast.LENGTH_LONG)
+						.show();
+                dialog.cancel();
+                
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+		
+	}
+	/**
+	 * Request to the server to download all pois 
+	 */
+	public void loaddAllPOIREQ(){
+		
+            	Toast.makeText(getApplicationContext(),
+						" Download  poi from server in pieton mod impossible ", Toast.LENGTH_LONG)
+						.show();
+              	
+	}
+	
+	/**
+	 *  Current location 
+	 * @return    : current location
+	 */
+	public LatLng getMyCurrentLocation(){
+		
+		LocationManager locationManager = (LocationManager) this
+				.getSystemService(LOCATION_SERVICE);
+		if(locationManager ==null)   return  null;
+		
+		String provider = locationManager.getBestProvider(
+				new Criteria(), true);
+
+		if (provider != null) {
+			// Get the last know position even if outdated
+			Location location = locationManager
+					.getLastKnownLocation(provider);
+			if (location != null) {
+				LatLng lastPosition = new LatLng(
+						location.getLatitude(),
+						location.getLongitude());
+				return lastPosition;
+			}
+		}
+	   return null;		
+	}
 	
 }

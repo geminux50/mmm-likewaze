@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/MenuMainRelativeLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 <!--     tools:context=".VehiculeModeActivity"  -->
 
     <TextView
@@ -15,6 +15,25 @@
         android:gravity="center"
         android:paddingRight="8dp"
         android:text="@string/dialog_main_switchmode"
+        android:textSize="18sp" />
+       <TextView
+        android:id="@+id/DeleteAllPoisId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/quit_96_noborder_white"
+        android:gravity="center"
+        android:paddingRight="8dp"
+        android:text="@string/del_all_pois"
+        android:textSize="18sp" /> 
+     
+       <TextView
+        android:id="@+id/LoadAllPoisId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/quit_96_noborder_white"
+        android:gravity="center"
+        android:paddingRight="8dp"
+        android:text="@string/load_all_pois"
         android:textSize="18sp" />
 
 <!--     Android best practices : No exit system, let the OS handle the lifecycle-->
@@ -29,4 +48,4 @@
 <!--         android:text="@string/dialog_main_quit" -->
 <!--         android:textSize="18sp" /> -->
 
-</RelativeLayout>
+</LinearLayout>

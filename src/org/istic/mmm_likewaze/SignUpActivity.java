@@ -11,7 +11,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+/**
+ * 
+ *   Sign Up Activity 
+ * @author me 
+ *
+ */
 public class SignUpActivity extends Activity {
 
 	private String _email;
@@ -53,6 +60,9 @@ public class SignUpActivity extends Activity {
 						}else{
 							
 							Log.i("RESULT LSIGNUP:","sign up failed " );
+							Toast.makeText(getApplicationContext(),
+									" Sign Up Fail : Please choose another Pseudo and PassWord ", Toast.LENGTH_LONG)
+									.show();
 						}
 
 					}}	
@@ -117,11 +127,8 @@ public class SignUpActivity extends Activity {
 					focusView.requestFocus();
 					return false;
 				} else {
-					        
-					     /* Toast.makeText(getBaseContext(),(String)" sign up : pseudo "+_pseudo+" email :"+
-					      _email+" pass :"+_password, 
-				                Toast.LENGTH_LONG).show();
-					      */
+					       //  every thing is fine, sign up call to the server 
+					       
 							RemoteUserController usrcntrl = new RemoteUserController();
 						    User u = new User();
 						    u.setEmail(_email);

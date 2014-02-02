@@ -79,10 +79,7 @@ public class LoginActivity extends Activity {
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						
-						
-					//  to delte just for test now 
-						
+					
 						if( attemptLogin()  == true){
                            Log.i("RESULT LOGIN :", "  login succeded  ! ");
 						Intent intent = new Intent(LoginActivity.this, VehiculeModeActivity.class);
@@ -112,9 +109,18 @@ public class LoginActivity extends Activity {
 		
 		_usrcntrl = new RemoteUserController();
 			
-		//  To delate later
-	
 		
+		
+		
+	     //  My Test of json connection to the server  
+		
+			  //  start activity json  ..... 
+		/*	Intent intent = new Intent(
+					LoginActivity.this,
+					Test_activity.class);
+			startActivity(intent);*/
+			
+
 	}
 
 	@Override
@@ -191,9 +197,9 @@ public class LoginActivity extends Activity {
 		
 						Toast.makeText(getBaseContext(),(String)"  login accepted  ", 
 				                Toast.LENGTH_SHORT).show();
-						for(int i=0; i< 30000000; i++){};
-						 return true;
-						// Call the activity to display the map. 
+						for(int i=0; i< 30000000; i++){}; //  wait a little to see the turning circle (progress) 
+						return true;
+						 
 					}else{
 						
 		
