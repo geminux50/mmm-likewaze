@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Strings related to VehiculeModeActivity -->
+    <string name="title_activity_vehicule_mode">VehiculeModeActivity</string>
+    <string name="menu_main">Menu</string>
+    <string name="menu_poi">Signaler</string>
+    <string name="menu_appel">Appels</string>
+    <string name="zoom_in">+</string>
+    <string name="zoom_out">-</string>
+    <string name="zoom_in_description">zoom in</string>
+    <string name="zoom_out_description">zoom out</string>
+    <string name="dialog_poi_title">Signaler</string>
+    <string name="dialog_call_title">Appeler</string>
+    <string name="vitesse_label">Vitesse:</string>
+    <string name="vitesse_value">N/A</string>
+    <string name="vitesse_unit">Km/h</string>
+    <string name="BtnPoliceDescription">Police</string>
+    <string name="BtnHazardDescription">Danger</string>
+    <string name="BtnTrafficJamDescription">Bouchon</string>
+    <string name="BtnSpeedCamDescription">Radar</string>
+    <string name="BtnAccidentDescription">Accident</string>
+    <string name="BtnAquaplaningDescription">Aquaplaning</string>
+    <string name="BtnCall15Description">15</string>
+    <string name="BtnCall17Description">17</string>
+    <string name="BtnCall18Description">18</string>
+    <string name="BtnCall112Description">112</string>
+
+</resources>

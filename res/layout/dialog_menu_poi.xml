@@ -9,58 +9,52 @@
     android:rowCount="2"
     tools:context=".VehiculeModeActivity" >
 
-    <!--  <ImageButton
-        android:id="@+id/BtnRadar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/radar_96" />  -->
     <ImageButton
         android:id="@+id/BtnPolice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/police" />
-     <ImageButton
-        android:id="@+id/Btnhazard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/hazard" />
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnPoliceDescription"
+        android:src="@drawable/police_96" />
 
-      <ImageButton
-        android:id="@+id/BtntrafficJam"
+    <ImageButton
+        android:id="@+id/BtnHazard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/trafficjam" />
-     
-       <ImageButton
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnHazardDescription"
+        android:src="@drawable/hazard_96" />
+
+    <ImageButton
+        android:id="@+id/BtnTrafficJam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnTrafficJamDescription"
+        android:src="@drawable/trafficjam_96" />
+
+    <ImageButton
         android:id="@+id/BtnAccident"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/accident" />
-       
-        <ImageButton
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnAccidentDescription"
+        android:src="@drawable/accident_96" />
+
+    <ImageButton
         android:id="@+id/BtnSpeedCam"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/speedcam" />
-        
-        
-        <!-- <ImageButton
-        android:id="@+id/BtnWaterDrops"
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnSpeedCamDescription"
+        android:src="@drawable/speedcam_96" />
+
+    <ImageButton
+        android:id="@+id/BtnAquaplaning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
-        android:src="@drawable/waterdrops" /> -->
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnAquaplaningDescription"
+        android:src="@drawable/aquaplaning_96" />
+
 </GridLayout>

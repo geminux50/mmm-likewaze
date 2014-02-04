@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import junit.framework.Test;
-
 import org.istic.mmm_likewaze.model.Poi;
 import org.istic.mmm_likewaze.model.TypePoi;
 import org.istic.mmm_likewaze.remote.controller.RemotePoiController;
@@ -36,6 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -44,47 +43,64 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class VehiculeModeActivity extends FragmentActivity implements
 		LocationListener, OnMarkerClickListener {
 
+	// TAG used for logs
+	private final static String TAG = VehiculeModeActivity.class.getName();
+
 	// Google Map
 	private GoogleMap googleMap;
-	private LatLng currentPosition = null, lastPosition = null;
+
+	// Current Position
+	private LatLng currentPosition = null;
+
+	// Last Position (just before the currentPosition)
+	private LatLng lastPosition = null;
+
+	// Times for the currentPosition and lastPosition
 	private long currentTime = 0, lastTime = 0;
+
+	// Location manager
 	private LocationManager locationManager;
+
+	// Camera and its zoom factor
 	private CameraUpdate camera;
 	private float zoomFactor = 18f;
-	private double vitesse;
-	private AlertDialog msgBox;
 
+	// Current measured speed
+	private double vitesse;
+
+	// Shaking Dialog and its timeout
+	private AlertDialog msgBox;
 	static final int TIME_OUT = 15000;
 	static final int MSG_DISMISS_DIALOG = 0;
 
-	//  Poi service
-	RemotePoiController  _poicntrl = new RemotePoiController();
-  
+	// Speed display
+	private TextView tv_vitesse_value;
+
+	// Poi service
+	RemotePoiController _poicntrl = new RemotePoiController();
+
 	private Long _myLocationPoi;
-	
-	//  A List of markers (Poi ) which  are present  the map 
+
+	// A List of markers (Poi ) which are present the map
 	private HashMap<Marker, Long> _liMarkersPois = new HashMap<Marker, Long>();
-	
-	
-	//  Timer for loading pois 
-	 Timer _myPoiTimer;
-			 
+
+	// Timer for loading pois
+	Timer _myPoiTimer;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 
-		
-		
-		
-		//  Try to get the saved data
-		/*if( savedInstanceState != null){
-			
-			_myLocationPoi = (Long)savedInstanceState.get("MyLocationPoi");
-			
-			}
-		}*/
-		
+		// Try to get the saved data
+		/*
+		 * if( savedInstanceState != null){
+		 * 
+		 * _myLocationPoi = (Long)savedInstanceState.get("MyLocationPoi");
+		 * 
+		 * } }
+		 */
+
 		// verification de la presence d'un accelerometre sur le device !!!
 		boolean presenceAccel = GestionAccelerometre
 				.accelerometrePresent(getApplicationContext());
@@ -107,20 +123,22 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 			// populate the map with list of POI(s)
 			populateTheMapWithPoi(googleMap);
-			
+
 			// set the marker listener
-			
+
 			googleMap.setOnMarkerClickListener(this);
-			
+
 			// Progame the timer to go and load the pois from the server
 			_myPoiTimer = new Timer();
-			 MyTimerTask _mytask= new MyTimerTask(); 
-			_myPoiTimer.schedule(_mytask,10000,35000);
-			
-			
+			MyTimerTask _mytask = new MyTimerTask();
+			_myPoiTimer.schedule(_mytask, 10000, 35000);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		// Load speed textview
+		tv_vitesse_value = (TextView) findViewById(R.id.tv_vitesse_value);
 
 		// Load all buttons
 		final ImageButton btn_zoom_in = (ImageButton) findViewById(R.id.btn_zoom_in);
@@ -178,54 +196,44 @@ public class VehiculeModeActivity extends FragmentActivity implements
 							}
 						});
 						break;
-                       case R.id.DeleteAllPoisId:
-						
-                    	   setBtnDeleteAllPoisAction((TextView) childView);
-						
+					case R.id.DeleteAllPoisId:
+
+						setBtnDeleteAllPoisAction((TextView) childView);
+
 						break;
-						
-                       case R.id.LoadAllPoisId:
-   						
-                    	   setBtnLoadAllPoisAction((TextView) childView);
-						
+
+					case R.id.LoadAllPoisId:
+
+						setBtnLoadAllPoisAction((TextView) childView);
+
 						break;
 					default:
 						break;
 					}
 				}
 			}
-			
+
 			private void setBtnDeleteAllPoisAction(TextView btn) {
 
 				btn.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						
-						Toast.makeText(getApplicationContext(), " delete all pois actions",
-								Toast.LENGTH_SHORT).show();
-						
+						// clear all POIs from server
 						clearAllMarkersREQ();
-						
-
 					}
 				});
 
 			}
-			
+
 			private void setBtnLoadAllPoisAction(TextView btn) {
 
 				btn.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						
-						Toast.makeText(getApplicationContext(), " load all pois actions",
-								Toast.LENGTH_SHORT).show();
-						
-						loaddAllPOIREQ();  // load all pois from server
-						
-
+						// load all POIs from server
+						loaddAllPOIREQ();
 					}
 				});
 
@@ -245,125 +253,56 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 				ViewGroup parentView = (ViewGroup) menuDialogPoi
 						.findViewById(R.id.MenuPoiGridLayout);
-				
+
 				for (int i = 0; i < parentView.getChildCount(); i++) {
 					View childView = parentView.getChildAt(i);
 					int resID = childView.getId();
 
 					switch (resID) {
-					
-					/*case R.id.BtnRadar:
-						setPoiBtnAction((ImageButton) childView,TypePoi.RADAR);
-						Toast.makeText(getApplicationContext(), "add Marker:" +TypePoi.RADAR,
-								Toast.LENGTH_SHORT).show();
-						break;*/
 
 					case R.id.BtnAccident:
-						
-						setPoiBtnAccidentAction((ImageButton) childView);
-						
+						setPoiBtnAction((ImageButton) childView,
+								TypePoi.ACCIDENT);
 						break;
-					case R.id.Btnhazard:
-						
-						setPoiBtnHazardAction((ImageButton) childView);
-						
+
+					case R.id.BtnHazard:
+						setPoiBtnAction((ImageButton) childView, TypePoi.DANGER);
 						break;
+
 					case R.id.BtnPolice:
-						
-						setPoiBtnPoliceAction((ImageButton) childView);
-						
+						setPoiBtnAction((ImageButton) childView, TypePoi.POLICE);
 						break;
+
 					case R.id.BtnSpeedCam:
-						
-						setPoiBtnSpeedCamAction((ImageButton) childView);
-						
-						break;	
-						
-					case R.id.BtntrafficJam:
-						
-						setPoiBtnTrafficJamAction((ImageButton) childView);
-						break;	
-                		
-								
+						setPoiBtnAction((ImageButton) childView, TypePoi.RADAR);
+						break;
+
+					case R.id.BtnTrafficJam:
+						setPoiBtnAction((ImageButton) childView,
+								TypePoi.TRAFFICJAM);
+						break;
+
+					case R.id.BtnAquaplaning:
+						setPoiBtnAction((ImageButton) childView, TypePoi.FLOOD);
+						break;
 					default:
 						break;
 					}
 				}
 			}
 
-			private void setPoiBtnAccidentAction(ImageButton btn) {
-
+			private void setPoiBtnAction(final ImageButton btn,
+					final TypePoi poiType) {
 				btn.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						
-                           // REQUEST to Server to add this marker
-						    addThisPoiREQ(getMyCurrentLocation(),TypePoi.ACCIDENT );
-						
-					}
-				});
-
-			}
-			
-			private void setPoiBtnHazardAction(ImageButton btn) {
-
-				btn.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-				
 						// REQUEST to Server to add this marker
-						addThisPoiREQ(getMyCurrentLocation(),TypePoi.DANGER );
+						addThisPoiREQ(getMyCurrentLocation(), poiType);
+
 					}
 				});
-
 			}
-			private void setPoiBtnPoliceAction(ImageButton btn) {
-
-				btn.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						
-						// REQUEST to Server to add this marker
-						addThisPoiREQ(getMyCurrentLocation(),TypePoi.POLICE);
-					}
-				});
-
-			}
-			private void setPoiBtnTrafficJamAction(ImageButton btn) {
-
-				btn.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						// REQUEST to Server to add this marker
-						addThisPoiREQ(getMyCurrentLocation(),TypePoi.TRAFFICJAM );
-						
-					}
-				});
-
-			}
-			private void setPoiBtnSpeedCamAction(ImageButton btn) {
-
-				btn.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						
-						// REQUEST to Server to add this marker
-						addThisPoiREQ(getMyCurrentLocation(),TypePoi.RADAR );
-					}
-				});
-
-			}
-			
-			
-
 		});
 
 		// Actions for the emergency call button
@@ -420,11 +359,8 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 		});
 
-		createDialog();
-
 	}
 
-	
 	/**
 	 * function to load map. If map is not created it will create it for you
 	 * */
@@ -487,388 +423,325 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		}
 	}
 
-	
 	/**
-	 *  Current location 
-	 * @return    : current location
+	 * Current location
+	 * 
+	 * @return : current location
 	 */
-	public LatLng getMyCurrentLocation(){
-		
+	public LatLng getMyCurrentLocation() {
+
 		LocationManager locationManager = (LocationManager) this
 				.getSystemService(LOCATION_SERVICE);
-		if(locationManager ==null)   return  null;
-		
-		String provider = locationManager.getBestProvider(
-				new Criteria(), true);
+		if (locationManager == null)
+			return null;
+
+		String provider = locationManager.getBestProvider(new Criteria(), true);
 
 		if (provider != null) {
 			// Get the last know position even if outdated
-			Location location = locationManager
-					.getLastKnownLocation(provider);
+			Location location = locationManager.getLastKnownLocation(provider);
 			if (location != null) {
-				LatLng lastPosition = new LatLng(
-						location.getLatitude(),
+				LatLng lastPosition = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				return lastPosition;
 			}
 		}
-	   return null;		
+		return null;
 	}
-	
+
+	private void drawAndSaveMarker(HashMap<Marker, Long> markersMap, Poi poi,
+			BitmapDescriptor icon, GoogleMap mMap) {
+		Marker m = mMap.addMarker(new MarkerOptions()
+				.position(new LatLng(poi.getCurLat(), poi.getCurLong()))
+				.icon(icon).title(poi.getLabel()));
+		_liMarkersPois.put(m, poi.getIdpoi());
+		Log.i(TAG, "Add a poi marker " + poi.getType() + " on the map");
+	}
+
 	/**
-	 *  Makes a request to the serveur to retrieve a list of POI
-	 * @param mMap: the map to populate
+	 * Makes a request to the serveur to retrieve a list of POI
+	 * 
+	 * @param mMap
+	 *            : the map to populate
 	 */
-	public void  populateTheMapWithPoi(GoogleMap mMap){
-		
-		 googleMap.clear();  // clear markers if their are any 
-		 // Reinit list of my poi (s)
-		 _liMarkersPois = new HashMap<Marker, Long>();
-		 if(_poicntrl ==null)
-		          _poicntrl = new RemotePoiController();
-		 
-		 //addMyPoi();
-		 
-		 ArrayList<Poi>  poiList= _poicntrl.getAllPoi();
-		  for(int i=0 ; i< poiList.size(); i++){
-			  
-			 if( poiList.get(i).getType().equals(TypePoi.ACCIDENT)){
-				Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.accident))
-					.title(poiList.get(i).getLabel())
-					);
-				_liMarkersPois.put(m, poiList.get(i).getIdpoi());
-				    Log.i("DRWING : "," ACCIDENT  ***********");
-			 }
-			 if( poiList.get(i).getType().equals(TypePoi.RADAR)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.speedcam))
-					.title(poiList.get(i).getLabel())
-					);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-				    Log.i("DRWING : "," ACCIDENT  ***********");
-			 }
-			  
-			 if( poiList.get(i).getType().equals(TypePoi.FLOOD)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.waterdrops))
-					.title(poiList.get(i).getLabel())
-					);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-			 if( poiList.get(i).getType().equals(TypePoi.POLICE)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.police))
-					.title(poiList.get(i).getLabel())
-					
-					);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-				 
-			 }
-			 
-			 if( poiList.get(i).getType().equals(TypePoi.USER)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-					.title(poiList.get(i).getLabel())
-					);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-			 
-			 if( poiList.get(i).getType().equals(TypePoi.FIRE)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.hazard))
-				.title(poiList.get(i).getLabel())	
-				);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-			 
-			 if( poiList.get(i).getType().equals(TypePoi.BOUCHON_CALCULE)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.trafficjam))
-				.title(poiList.get(i).getLabel())	
-				);  
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-             if( poiList.get(i).getType().equals(TypePoi.BOUCHON_SIGNALE)){
-            	 Marker m =mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.trafficjam))
-				.title(poiList.get(i).getLabel())	
-            	);  
-            	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-              
-             if( poiList.get(i).getType().equals(TypePoi.DANGER)){
-            	 Marker m =mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.hazard))
-					.title(poiList.get(i).getLabel())
-            		); 
-            	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
- 			 }
-             
-             if( poiList.get(i).getType().equals(TypePoi.TRAVAUX)){
- 				 
- 			 }
-             if( poiList.get(i).getType().equals(TypePoi.PIETON_E)){
-            	 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.est))
-					.title(poiList.get(i).getLabel())
-            		);
-            	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
- 			 }
-             
-             if( poiList.get(i).getType().equals(TypePoi.PIETON_N)){
-            	 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.nord))
-					.title(poiList.get(i).getLabel())
-            		);
-            	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
- 			 }
-             if( poiList.get(i).getType().equals(TypePoi.PIETON_NE)){
-            	 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.nordest))
-				.title(poiList.get(i).getLabel())
-            	); 
-            	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
- 			 }
-			
-             if( poiList.get(i).getType().equals(TypePoi.PIETON_NW)){
-            	 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.nordouest))	
-            	   .title(poiList.get(i).getLabel())		 
-            	);
-            	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
- 			 }
-			 if( poiList.get(i).getType().equals(TypePoi.PIETON_S)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.sud))
-				  .title(poiList.get(i).getLabel())	
-				); 
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			  }
-						
-		     if( poiList.get(i).getType().equals(TypePoi.PIETON_SE)){
-		    	 Marker m =mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.sudest)));
-		    	 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-			 if( poiList.get(i).getType().equals(TypePoi.PIETON_SW)){
-				 
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.sudouest))
-					.title(poiList.get(i).getLabel())
-					);
-				 
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			 }
-			 if( poiList.get(i).getType().equals(TypePoi.PIETON_W)){
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.ouest))
-				  .title(poiList.get(i).getLabel())	
-				);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			  }
-			 
-			 if( poiList.get(i).getType().equals(TypePoi.NULLTYPE)){  // ^^ replace it with PANNE TYPE
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.panne_96))
-				  .title(poiList.get(i).getLabel())	
-				);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			  }
-			 // TRAFFICJAM
-			 if( poiList.get(i).getType().equals(TypePoi.TRAFFICJAM)){  // ^^ replace it with PANNE TYPE
-				 Marker m = mMap.addMarker(new MarkerOptions()
-					.position( new LatLng(poiList.get(i).getCurLat(), poiList.get(i).getCurLong())).
-					icon(BitmapDescriptorFactory.fromResource(R.drawable.trafficjam))
-				  .title(poiList.get(i).getLabel())	
-				);
-				 _liMarkersPois.put(m, poiList.get(i).getIdpoi());
-			  }
-			 // so on 
-		  }
-		
-		/*LatLng position = new LatLng(48.121781, -1.65451);
-	      
-		mMap.addMarker(new MarkerOptions()
-		.position(position).
-		icon(BitmapDescriptorFactory.fromResource(R.drawable.accident)));*/
-		  
-		  
-	}
-	
-	@Override
-	public boolean onMarkerClick(final Marker marker){
-		
-		
-		if(_liMarkersPois.containsKey(marker)){
-			
-			Toast.makeText(getApplicationContext(),
-					"Marker found : ,"+_liMarkersPois.get(marker) +" please wait ..", Toast.LENGTH_LONG)
-					.show();
-			clearAPoiREQ(_liMarkersPois.get(marker));
-		}else{
-			
+	public void populateTheMapWithPoi(GoogleMap mMap) {
+
+		// clear markers if their are any
+		mMap.clear();
+		// Reinit list of my poi (s)
+		_liMarkersPois = new HashMap<Marker, Long>();
+		if (_poicntrl == null)
+			_poicntrl = new RemotePoiController();
+
+		ArrayList<Poi> poiList = _poicntrl.getAllPoi();
+		for (Poi poi : poiList) {
+
+			TypePoi typePoi = poi.getType();
+			BitmapDescriptor icon = null;
+
+			if (typePoi.equals(TypePoi.ACCIDENT)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.accident_96);
+			}
+
+			if (typePoi.equals(TypePoi.RADAR)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.speedcam_96);
+			}
+
+			if (typePoi.equals(TypePoi.FLOOD)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.aquaplaning_96);
+			}
+
+			if (typePoi.equals(TypePoi.POLICE)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.police_96);
+			}
+
+			if (typePoi.equals(TypePoi.USER)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.user_96);
+			}
+
+			if (typePoi.equals(TypePoi.FIRE)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.hazard_96);
+			}
+
+			if (typePoi.equals(TypePoi.BOUCHON_CALCULE)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.trafficjam_96);
+			}
+
+			if (typePoi.equals(TypePoi.BOUCHON_SIGNALE)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.trafficjam_96);
+			}
+
+			if (typePoi.equals(TypePoi.DANGER)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.hazard_96);
+			}
+
+			if (typePoi.equals(TypePoi.TRAVAUX)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.unknow_poi_96);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_E)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.est);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_N)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.nord);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_NE)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.nordest);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_NW)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.nordouest);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_S)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.sud);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_SE)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.sudest);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_SW)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.sudouest);
+			}
+
+			if (typePoi.equals(TypePoi.PIETON_W)) {
+				icon = BitmapDescriptorFactory.fromResource(R.drawable.ouest);
+			}
+
+			if (typePoi.equals(TypePoi.NULLTYPE)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.unknow_poi_96);
+			}
+
+			if (typePoi.equals(TypePoi.TRAFFICJAM)) {
+				icon = BitmapDescriptorFactory
+						.fromResource(R.drawable.trafficjam_96);
+			}
+
+			if (icon != null) {
+				drawAndSaveMarker(_liMarkersPois, poi, icon, mMap);
+			}
 		}
-		
+
+	}
+
+	@Override
+	public boolean onMarkerClick(final Marker marker) {
+
+		if (_liMarkersPois.containsKey(marker)) {
+
+			Log.i(TAG, "Marker found : ," + _liMarkersPois.get(marker)
+					+ " please wait ..");
+			// Log message better solution than toast
+			// Feedback to user is done by the marker itself
+			// Toast.makeText(
+			// getApplicationContext(),
+			// "Marker found : ," + _liMarkersPois.get(marker)
+			// + " please wait ..", Toast.LENGTH_LONG).show();
+			clearAPoiREQ(_liMarkersPois.get(marker));
+		} else {
+
+		}
+
 		return true;
 	}
-	
+
 	/**
-	 *   Request to the server to add this poi
-	 * @param pos  : position of the poi to be added 
-	 * @param type : type of the poi to add
+	 * Request to the server to add this poi
+	 * 
+	 * @param pos
+	 *            : position of the poi to be added
+	 * @param type
+	 *            : type of the poi to add
 	 */
-	public void addThisPoiREQ(LatLng pos,TypePoi type ){
-		
-		Toast.makeText(getApplicationContext(), "add Marker: "+type+" ,  "+
-				getMyCurrentLocation().latitude+" - "+getMyCurrentLocation().longitude,
-				Toast.LENGTH_SHORT).show();
-		
+	public void addThisPoiREQ(LatLng pos, TypePoi type) {
+		Log.i(TAG, "add Marker: " + type + " ,  "
+				+ getMyCurrentLocation().latitude + " - "
+				+ getMyCurrentLocation().longitude);
+
+		// Log message better solution than toast
+		// Feedback to user is done by the marker itself
+		// Toast.makeText(
+		// getApplicationContext(),
+		// "add Marker: " + type + " ,  "
+		// + getMyCurrentLocation().latitude + " - "
+		// + getMyCurrentLocation().longitude, Toast.LENGTH_SHORT)
+		// .show();
+
 		Poi po = new Poi();
-		po.setCurLat(pos.latitude);po.setCurLong(pos.longitude);
+		po.setCurLat(pos.latitude);
+		po.setCurLong(pos.longitude);
 		po.setType(type);
-		po.setLabel(type+"  label");
+		po.setLabel(type + "  label");
 		// call the service to add poi
 		_poicntrl.addPoi(po);
 		// reaload the map from server
 		populateTheMapWithPoi(googleMap);
 	}
-	
+
 	/**
 	 * Clear a poi from the map
 	 * 
-	 * @param poid : the poi identifier 
+	 * @param poid
+	 *            : the poi identifier
 	 */
-	public void clearAPoiREQ(final Long poid){
-		
-		
-		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(" Do you want to delete this POI s "+poid+"?");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"Yes delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                // MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
-                // POISERVICE.DELETE(poiid)
-                Long idPoiToDelete = poid;
-                _poicntrl.deletePoi(idPoiToDelete);
-                googleMap.clear();
-                populateTheMapWithPoi(googleMap);
-            }
-        });
-        builder1.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"No delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                
-            }
-        });
+	public void clearAPoiREQ(final Long poid) {
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
-		
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+		builder1.setMessage(" Supprimer ce POI: " + poid + "?");
+		builder1.setCancelable(true);
+		builder1.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						Toast.makeText(getApplicationContext(),
+								"Le POI a bien été supprimé",
+								Toast.LENGTH_SHORT).show();
+						dialog.cancel();
+						// MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
+						// POISERVICE.DELETE(poiid)
+						Long idPoiToDelete = poid;
+						_poicntrl.deletePoi(idPoiToDelete);
+						googleMap.clear();
+						populateTheMapWithPoi(googleMap);
+					}
+				});
+		builder1.setNegativeButton("Non",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+
+					}
+				});
+
+		AlertDialog alert11 = builder1.create();
+		alert11.show();
+
 	}
-	
+
 	/**
-	 *    Clear the markers from the map. this has a local effect 
-	 *     To delete a spacific marker (poi)  for all the community 
-	 *     right click on the marker ...  you will be guided don't worry ^^
+	 * Clear the markers from the map. this has a local effect To delete a
+	 * spacific marker (poi) for all the community right click on the marker ...
+	 * you will be guided don't worry ^^
 	 */
-	public void clearAllMarkersREQ(){
+	public void clearAllMarkersREQ() {
 		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(" Do you want to delete all POI s ?");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"Yes delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                googleMap.clear();
-            }
-        });
-        builder1.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"No delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                
-            }
-        });
+		builder1.setMessage("   Supprimer tous les POIs ?");
+		builder1.setCancelable(true);
+		builder1.setPositiveButton("Oui",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						Log.i(TAG, "All POIs have been deleted");
+						Toast.makeText(getApplicationContext(),
+								" Suppression de tous les POIs (En local)",
+								Toast.LENGTH_LONG).show();
+						dialog.cancel();
+						googleMap.clear();
+					}
+				});
+		builder1.setNegativeButton("Non",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
-		//
+		AlertDialog alert11 = builder1.create();
+		alert11.show();
 	}
-	
+
 	/**
-	 * Request to the server to download all pois 
+	 * Request to the server to download all pois
 	 */
-	public void loaddAllPOIREQ(){
+	public void loaddAllPOIREQ() {
 		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(" Do you want to downlaod  all POI s ?");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"Yes download ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                googleMap.clear();
-                populateTheMapWithPoi(googleMap);
-            }
-        });
-        builder1.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"No delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                
-            }
-        });
+		builder1.setMessage("  Télécharger tous les POIs ?");
+		builder1.setCancelable(true);
+		builder1.setPositiveButton("oui",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						Log.i(TAG, "All POIs have been refreshed");
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
-		
-		
+						Toast.makeText(getApplicationContext(),
+								"Tous les POIs ont été téléchargés",
+								Toast.LENGTH_LONG).show();
+						dialog.cancel();
+						googleMap.clear();
+						populateTheMapWithPoi(googleMap);
+					}
+				});
+		builder1.setNegativeButton("Non",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+
+					}
+				});
+
+		AlertDialog alert11 = builder1.create();
+		alert11.show();
+
 	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		// Reinitializing the map
 		initilizeMap();
-		
+
 	}
 
 	@Override
@@ -899,12 +772,15 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					lastPosition.longitude, currentPosition.latitude,
 					currentPosition.longitude, result);
 
-			vitesse = (result[0] * 1000 / diffTime) / 3.6;
+			vitesse = Math.round((result[0] * 1000 / diffTime) / 3.6);
 
-			// @todoMarc
-			Toast.makeText(getApplicationContext(),
-					"vitesse = " + vitesse + " km/h", Toast.LENGTH_SHORT)
-					.show();
+			if (tv_vitesse_value != null) {
+				tv_vitesse_value.setText(String.valueOf(vitesse));
+			}
+
+			// Toast.makeText(getApplicationContext(),
+			// "vitesse = " + vitesse + " km/h", Toast.LENGTH_SHORT)
+			// .show();
 		}
 
 		// Camera follow the new position
@@ -928,42 +804,56 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void secouage() {
-		// @todoMarc appel � VALID POI
-		Toast.makeText(getApplicationContext(), "SECOUER MOI !!!!",
-				Toast.LENGTH_SHORT).show();
+		// Only one AlertBox at the same time
+		if (msgBox == null || (msgBox != null && !msgBox.isShowing())) {
+			AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+			builder1.setMessage(" Signaler un DANGER ?");
+			builder1.setCancelable(true);
+			builder1.setPositiveButton("Oui",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							addThisPoiREQ(getMyCurrentLocation(),
+									TypePoi.DANGER);
+							dialog.cancel();
+							// populateTheMapWithPoi(googleMap);
+						}
+					});
+			builder1.setNegativeButton("Non",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
 
-		msgBox.show();
-		mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, TIME_OUT);
+						}
+					});
+
+			msgBox = builder1.create();
+			msgBox.show();
+			mHandler.sendEmptyMessageDelayed(MSG_DISMISS_DIALOG, TIME_OUT);
+		}
+
 	}
 
-	private void createDialog() {
-
-		AlertDialog.Builder msgBoxBuilder = new AlertDialog.Builder(this);
-		msgBoxBuilder.setMessage("ENVOYER UNE ALERTE ?");
-		msgBoxBuilder.setPositiveButton("OUI !!!", null);
-
-		msgBox = msgBoxBuilder.create();
-
-	}
-    @Override
+	@Override
 	protected void onSaveInstanceState(Bundle mysaver) {
-		  super.onSaveInstanceState(mysaver);
-		  //  save muy location
-		/*  mysaver.putLong("MyLocationPoi",_myLocationPoi);
-		  
+		super.onSaveInstanceState(mysaver);
+		// save muy location
+		/*
+		 * mysaver.putLong("MyLocationPoi",_myLocationPoi);
 		 */
-		  
-    }
+
+	}
+
 	/**
-	 *  Reload all  the POI (s) from the server  at a given interval time 
+	 * Reload all the POI (s) from the server at a given interval time
+	 * 
 	 * @author me
-	 *
+	 * 
 	 */
-    class MyTimerTask extends TimerTask {
+	class MyTimerTask extends TimerTask {
 
 		@Override
 		public void run() {
@@ -971,16 +861,14 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 				@Override
 				public void run() {
-					
-					Toast.makeText(getApplicationContext(), "Realoding of the POI (s)  ... ",
-									Toast.LENGTH_SHORT).show();
+					Log.i(TAG, "Reloding of the POI (s)  ... ");
 					populateTheMapWithPoi(googleMap);
-				};});
-			
+				};
+			});
+
 		}
-  	 
-  	}
-    
+	}
+
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -997,4 +885,3 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	};
 
 }
-

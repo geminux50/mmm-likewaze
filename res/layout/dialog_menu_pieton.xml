@@ -6,16 +6,15 @@
     android:layout_height="wrap_content"
     android:columnCount="2"
     android:orientation="horizontal"
-    android:rowCount="3"
+    android:rowCount="2"
     tools:context=".PietonModeActivity" >
 
     <ImageButton
         android:id="@+id/BtnAutoStop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_columnSpan="2"
         android:layout_gravity="fill_horizontal"
-        android:background="@drawable/pressed_96"
+        android:background="@drawable/pressed_96_onmenu"
         android:contentDescription="@string/menu_pieton_autostop"
         android:src="@drawable/auto_stop_96" />
 
@@ -23,10 +22,8 @@
         android:id="@+id/BtnPanne"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_column="0"
         android:layout_gravity="left|top"
-        android:layout_row="2"
-        android:background="@drawable/pressed_96"
+        android:background="@drawable/pressed_96_onmenu"
         android:contentDescription="@string/menu_pieton_panne"
         android:src="@drawable/panne_96" />
 

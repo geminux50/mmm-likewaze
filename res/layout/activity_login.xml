@@ -55,7 +55,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/waze_img_desc"
-                android:src="@drawable/waze" />
+                android:src="@drawable/waze_logo" />
 
             <TextView
                 android:id="@+id/login_message_id"

@@ -13,32 +13,32 @@
         android:id="@+id/BtnCall15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnCall15Description"
         android:src="@drawable/call15_96" />
 
     <ImageButton
         android:id="@+id/BtnCall17"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnCall17Description"
         android:src="@drawable/call17_96" />
 
     <ImageButton
         android:id="@+id/BtnCall18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnCall18Description"
         android:src="@drawable/call18_96" />
 
     <ImageButton
         android:id="@+id/BtnCall112"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pressed_96"
-        android:contentDescription="@string/zoom_out_description"
+        android:background="@drawable/pressed_96_onmenu"
+        android:contentDescription="@string/BtnCall112Description"
         android:src="@drawable/call112_96" />
 
 </GridLayout>

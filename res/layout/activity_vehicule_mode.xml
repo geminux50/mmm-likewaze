@@ -41,6 +41,42 @@
         android:layout_marginRight="10dp"
         android:text="@string/menu_poi" />
 
+    <TextView
+        android:id="@+id/tv_vitesse_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#000000"
+        android:padding="5dp"
+        android:text="@string/vitesse_label"
+        android:textSize="16sp"
+        android:color="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/tv_vitesse_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_vitesse_label"
+        android:layout_toRightOf="@+id/tv_vitesse_label"
+        android:background="#000000"
+        android:padding="5dp"
+        android:text="@string/vitesse_value"
+        android:textSize="16sp"
+        android:color="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/tv_vitesse_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tv_vitesse_label"
+        android:layout_toRightOf="@+id/tv_vitesse_value"
+        android:background="#000000"
+        android:padding="5dp"
+        android:text="@string/vitesse_unit"
+        android:textSize="16sp"
+        android:color="#FFFFFF" />
+
     <ImageButton
         android:id="@+id/btn_zoom_out"
         android:layout_width="wrap_content"
@@ -48,7 +84,7 @@
         android:layout_above="@+id/btn_menu_poi"
         android:layout_alignRight="@+id/btn_menu_poi"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/pressed_96"
+        android:background="@drawable/pressed_96_onmap"
         android:contentDescription="@string/zoom_out_description"
         android:src="@drawable/zoom_out_96" />
 
@@ -59,7 +95,7 @@
         android:layout_above="@+id/btn_zoom_out"
         android:layout_alignRight="@+id/btn_zoom_out"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/pressed_96"
+        android:background="@drawable/pressed_96_onmap"
         android:contentDescription="@string/zoom_in_description"
         android:src="@drawable/zoom_in_96" />
 
