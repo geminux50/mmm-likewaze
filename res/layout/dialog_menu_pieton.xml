@@ -11,18 +11,16 @@
 
     <ImageButton
         android:id="@+id/BtnAutoStop"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="fill_horizontal"
         android:background="@drawable/pressed_96_onmenu"
         android:contentDescription="@string/menu_pieton_autostop"
         android:src="@drawable/auto_stop_96" />
 
     <ImageButton
         android:id="@+id/BtnPanne"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|top"
         android:background="@drawable/pressed_96_onmenu"
         android:contentDescription="@string/menu_pieton_panne"
         android:src="@drawable/panne_96" />

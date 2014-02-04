@@ -9,6 +9,7 @@ import org.istic.mmm_likewaze.model.Poi;
 import org.istic.mmm_likewaze.model.TypePoi;
 import org.istic.mmm_likewaze.remote.controller.RemotePoiController;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -70,36 +70,25 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 	// Shaking Dialog and its timeout
 	private AlertDialog msgBox;
-	static final int TIME_OUT = 15000;
-	static final int MSG_DISMISS_DIALOG = 0;
+	private static final int TIME_OUT = 15000;
+	private static final int MSG_DISMISS_DIALOG = 0;
 
 	// Speed display
 	private TextView tv_vitesse_value;
 
 	// Poi service
-	RemotePoiController _poicntrl = new RemotePoiController();
-
-	private Long _myLocationPoi;
+	private RemotePoiController _poicntrl = new RemotePoiController();
 
 	// A List of markers (Poi ) which are present the map
 	private HashMap<Marker, Long> _liMarkersPois = new HashMap<Marker, Long>();
 
 	// Timer for loading pois
-	Timer _myPoiTimer;
+	private Timer _myPoiTimer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-
-		// Try to get the saved data
-		/*
-		 * if( savedInstanceState != null){
-		 * 
-		 * _myLocationPoi = (Long)savedInstanceState.get("MyLocationPoi");
-		 * 
-		 * } }
-		 */
 
 		// verification de la presence d'un accelerometre sur le device !!!
 		boolean presenceAccel = GestionAccelerometre
@@ -168,12 +157,14 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		// Actions for the main menu button
 		btn_menu_main.setOnClickListener(new View.OnClickListener() {
 
+			MenuDialog menuDialogMain;
+
 			@Override
 			public void onClick(View arg0) {
 
-				MenuDialog menuDialogMain = new MenuDialog(
-						VehiculeModeActivity.this, R.string.dialog_main_title,
-						btn_menu_main, R.layout.dialog_menu_main);
+				menuDialogMain = new MenuDialog(VehiculeModeActivity.this,
+						R.string.dialog_main_title, btn_menu_main,
+						R.layout.dialog_menu_main);
 				menuDialogMain.show();
 
 				ViewGroup parentView = (ViewGroup) menuDialogMain
@@ -192,21 +183,19 @@ public class VehiculeModeActivity extends FragmentActivity implements
 								Intent intent = new Intent(
 										VehiculeModeActivity.this,
 										PietonModeActivity.class);
+								menuDialogMain.dismiss();
 								startActivity(intent);
 							}
 						});
 						break;
 					case R.id.DeleteAllPoisId:
-
 						setBtnDeleteAllPoisAction((TextView) childView);
-
 						break;
 
 					case R.id.LoadAllPoisId:
-
 						setBtnLoadAllPoisAction((TextView) childView);
-
 						break;
+
 					default:
 						break;
 					}
@@ -221,6 +210,8 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					public void onClick(View v) {
 						// clear all POIs from server
 						clearAllMarkersREQ();
+						menuDialogMain.dismiss();
+
 					}
 				});
 
@@ -234,6 +225,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					public void onClick(View v) {
 						// load all POIs from server
 						loaddAllPOIREQ();
+						menuDialogMain.dismiss();
 					}
 				});
 
@@ -243,12 +235,14 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		// Actions for the POI signaling button
 		btn_menu_poi.setOnClickListener(new View.OnClickListener() {
 
+			MenuDialog menuDialogPoi;
+
 			@Override
 			public void onClick(View arg0) {
 
-				MenuDialog menuDialogPoi = new MenuDialog(
-						VehiculeModeActivity.this, R.string.dialog_poi_title,
-						btn_menu_poi, R.layout.dialog_menu_poi);
+				menuDialogPoi = new MenuDialog(VehiculeModeActivity.this,
+						R.string.dialog_poi_title, btn_menu_poi,
+						R.layout.dialog_menu_poi);
 				menuDialogPoi.show();
 
 				ViewGroup parentView = (ViewGroup) menuDialogPoi
@@ -299,6 +293,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					public void onClick(View v) {
 						// REQUEST to Server to add this marker
 						addThisPoiREQ(getMyCurrentLocation(), poiType);
+						menuDialogPoi.dismiss();
 
 					}
 				});
@@ -308,12 +303,14 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		// Actions for the emergency call button
 		btn_menu_call.setOnClickListener(new View.OnClickListener() {
 
+			MenuDialog menuDialogCall;
+
 			@Override
 			public void onClick(View arg0) {
 
-				MenuDialog menuDialogCall = new MenuDialog(
-						VehiculeModeActivity.this, R.string.dialog_call_title,
-						btn_menu_call, R.layout.dialog_menu_call);
+				menuDialogCall = new MenuDialog(VehiculeModeActivity.this,
+						R.string.dialog_call_title, btn_menu_call,
+						R.layout.dialog_menu_call);
 				menuDialogCall.show();
 
 				ViewGroup parentView = (ViewGroup) menuDialogCall
@@ -348,6 +345,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 					@Override
 					public void onClick(View v) {
 						// TODO (Toast stub)
+						menuDialogCall.dismiss();
 						Toast.makeText(getApplicationContext(),
 								"Calling " + phoneNumber, Toast.LENGTH_SHORT)
 								.show();
@@ -564,7 +562,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 			if (typePoi.equals(TypePoi.NULLTYPE)) {
 				icon = BitmapDescriptorFactory
-						.fromResource(R.drawable.unknow_poi_96);
+						.fromResource(R.drawable.panne_96);
 			}
 
 			if (typePoi.equals(TypePoi.TRAFFICJAM)) {
@@ -583,15 +581,8 @@ public class VehiculeModeActivity extends FragmentActivity implements
 	public boolean onMarkerClick(final Marker marker) {
 
 		if (_liMarkersPois.containsKey(marker)) {
-
 			Log.i(TAG, "Marker found : ," + _liMarkersPois.get(marker)
 					+ " please wait ..");
-			// Log message better solution than toast
-			// Feedback to user is done by the marker itself
-			// Toast.makeText(
-			// getApplicationContext(),
-			// "Marker found : ," + _liMarkersPois.get(marker)
-			// + " please wait ..", Toast.LENGTH_LONG).show();
 			clearAPoiREQ(_liMarkersPois.get(marker));
 		} else {
 
@@ -612,16 +603,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		Log.i(TAG, "add Marker: " + type + " ,  "
 				+ getMyCurrentLocation().latitude + " - "
 				+ getMyCurrentLocation().longitude);
-
-		// Log message better solution than toast
-		// Feedback to user is done by the marker itself
-		// Toast.makeText(
-		// getApplicationContext(),
-		// "add Marker: " + type + " ,  "
-		// + getMyCurrentLocation().latitude + " - "
-		// + getMyCurrentLocation().longitude, Toast.LENGTH_SHORT)
-		// .show();
-
 		Poi po = new Poi();
 		po.setCurLat(pos.latitude);
 		po.setCurLong(pos.longitude);
@@ -644,17 +625,16 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
 		builder1.setMessage(" Supprimer ce POI: " + poid + "?");
 		builder1.setCancelable(true);
-		builder1.setPositiveButton("Yes",
+		builder1.setPositiveButton("Oui",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+						// MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
+						Long idPoiToDelete = poid;
+						_poicntrl.deletePoi(idPoiToDelete);
 						Toast.makeText(getApplicationContext(),
 								"Le POI a bien été supprimé",
 								Toast.LENGTH_SHORT).show();
-						dialog.cancel();
-						// MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
-						// POISERVICE.DELETE(poiid)
-						Long idPoiToDelete = poid;
-						_poicntrl.deletePoi(idPoiToDelete);
 						googleMap.clear();
 						populateTheMapWithPoi(googleMap);
 					}
@@ -663,7 +643,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
-
 					}
 				});
 
@@ -733,22 +712,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 
 		AlertDialog alert11 = builder1.create();
 		alert11.show();
-
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// Reinitializing the map
-		initilizeMap();
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.vehicule_mode, menu);
-		return true;
 	}
 
 	@Override
@@ -777,10 +740,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 			if (tv_vitesse_value != null) {
 				tv_vitesse_value.setText(String.valueOf(vitesse));
 			}
-
-			// Toast.makeText(getApplicationContext(),
-			// "vitesse = " + vitesse + " km/h", Toast.LENGTH_SHORT)
-			// .show();
 		}
 
 		// Camera follow the new position
@@ -819,7 +778,6 @@ public class VehiculeModeActivity extends FragmentActivity implements
 							addThisPoiREQ(getMyCurrentLocation(),
 									TypePoi.DANGER);
 							dialog.cancel();
-							// populateTheMapWithPoi(googleMap);
 						}
 					});
 			builder1.setNegativeButton("Non",
@@ -869,6 +827,7 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		}
 	}
 
+	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -883,5 +842,29 @@ public class VehiculeModeActivity extends FragmentActivity implements
 			}
 		}
 	};
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Reinitializing the map
+		initilizeMap();
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (locationManager != null) {
+			locationManager.removeUpdates(this);
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onPause();
+		if (locationManager != null) {
+			locationManager.removeUpdates(this);
+		}
+	}
 
 }

@@ -20,7 +20,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,33 +38,40 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class PietonModeActivity extends FragmentActivity implements LocationListener,OnMarkerClickListener {
-	
-	 double latitude;
-     double longitude;
-     
-     private GoogleMap googleMap;
-     private CameraUpdate camera;
-     private LocationManager locationManager;
-     private float zoomFactor = 15f;
+public class PietonModeActivity extends FragmentActivity implements
+		LocationListener, OnMarkerClickListener {
 
-     // Current position
-     private LatLng currentPosition;
+	// TAG used for logs
+	private final static String TAG = PietonModeActivity.class.getName();
 
-     private ProgressDialog progressDialog;
- 	 private List<LatLng> history;
- 	 
- 	 //bearing
- 	 private float bearing;
- 	 
-     //  Poi service
- 	RemotePoiController  _poicntrl = new RemotePoiController();
-   
- 	private Long _myLocationPoi;
- 	 
-    //  A List of markers (Poi ) which  are present  the map 
- 	private HashMap<Marker, Long> _liMarkersPois = new HashMap<Marker, Long>();
- 	
+	// Google Map
+	private GoogleMap googleMap;
+
+	// Location manager
+	private LocationManager locationManager;
+
+	// Camera and its zoom factor
+	private CameraUpdate camera;
+	private float zoomFactor = 15f;
+
+	// Current position
+	private LatLng currentPosition;
+
+	// Dialog for bearing calculation
+	private ProgressDialog progressDialog;
+
+	// History of GpsPoint to calculate bearing with
+	private List<LatLng> history;
+
+	// Calculated bearing
+	private float bearing;
+
+	// Poi service
+	private RemotePoiController _poicntrl = new RemotePoiController();
+
+	// A List of markers (Poi ) which are present the map
+	private HashMap<Marker, Long> _liMarkersPois = new HashMap<Marker, Long>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -76,21 +82,21 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			// Initialize the map
 			initilizeMap();
 			// set the marker listener
-			
+
 			googleMap.setOnMarkerClickListener(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// Load all buttons
 		final ImageButton btn_zoom_in = (ImageButton) findViewById(R.id.btn_zoom_in_pieton);
 		final ImageButton btn_zoom_out = (ImageButton) findViewById(R.id.btn_zoom_out_pieton);
 		final Button btn_menu_main = (Button) findViewById(R.id.btn_menu_main_pieton);
 		final Button btn_menu_pieton = (Button) findViewById(R.id.btn_menu_pieton);
-		
+
 		// Actions for the zoom-in button
 		btn_zoom_in.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 
@@ -99,10 +105,10 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 				googleMap.animateCamera(camera);
 			}
 		});
-		
+
 		// Actions for the zoom-out button
 		btn_zoom_out.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 
@@ -111,18 +117,20 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 				googleMap.animateCamera(camera);
 			}
 		});
-		
+
 		// Actions for the main menu button
 		btn_menu_main.setOnClickListener(new View.OnClickListener() {
+
+			MenuDialog menuDialogMain;
 
 			@Override
 			public void onClick(View arg0) {
 
-				MenuDialog menuDialogMain = new MenuDialog(
-						PietonModeActivity.this, R.string.dialog_main_title,
-						btn_menu_main, R.layout.dialog_menu_main);
+				menuDialogMain = new MenuDialog(PietonModeActivity.this,
+						R.string.dialog_main_title, btn_menu_main,
+						R.layout.dialog_menu_main);
 				menuDialogMain.show();
-				
+
 				ViewGroup parentView = (ViewGroup) menuDialogMain
 						.findViewById(R.id.MenuMainRelativeLayout);
 				for (int i = 0; i < parentView.getChildCount(); i++) {
@@ -136,81 +144,58 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 
 							@Override
 							public void onClick(View v) {
-								Intent intent = new Intent(PietonModeActivity.this,
-								VehiculeModeActivity.class);
+								Intent intent = new Intent(
+										PietonModeActivity.this,
+										VehiculeModeActivity.class);
+								menuDialogMain.dismiss();
 								startActivity(intent);
 							}
 						});
 						break;
-					 case R.id.DeleteAllPoisId:
-							
-                  	   setBtnDeleteAllPoisAction((TextView) childView);
-						
+					case R.id.DeleteAllPoisId:
+						setBtnDeleteAllPoisAction((TextView) childView);
 						break;
-						
-                     case R.id.LoadAllPoisId:
- 						
-                  	   setBtnLoadAllPoisAction((TextView) childView);
-						
-						break;	
+
+					case R.id.LoadAllPoisId:
+						//setBtnLoadAllPoisAction((TextView) childView);
+						((TextView) childView).setVisibility(View.GONE);
+						break;
 
 					default:
 						break;
 					}
-				
+
 				}
 			}
-			
-			
+
 			private void setBtnDeleteAllPoisAction(TextView btn) {
 
 				btn.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						
-						Toast.makeText(getApplicationContext(), " delete all pois actions",
-								Toast.LENGTH_SHORT).show();
-						
+						// clear all POIs from server
 						clearAllMarkersREQ();
-						
-
+						menuDialogMain.dismiss();
 					}
 				});
 
-			}
-			
-			private void setBtnLoadAllPoisAction(TextView btn) {
-
-				btn.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						Toast.makeText(getApplicationContext(), " load all pois actions",
-								Toast.LENGTH_SHORT).show();
-						
-						loaddAllPOIREQ();  // load all pois from server
-						
-
-					}
-				});
 			}
 		});
-		
-		
+
 		// Actions for the pieton menu button
 		btn_menu_pieton.setOnClickListener(new View.OnClickListener() {
-			
+
+			MenuDialog menuPieton;
+
 			@Override
 			public void onClick(View v) {
-				
-				MenuDialog menuPieton = new MenuDialog(	PietonModeActivity.this,
-														R.string.dialog_pieton_title,
-														btn_menu_pieton,
-														R.layout.dialog_menu_pieton);
+
+				menuPieton = new MenuDialog(PietonModeActivity.this,
+						R.string.dialog_pieton_title, btn_menu_pieton,
+						R.layout.dialog_menu_pieton);
 				menuPieton.show();
-				
+
 				ViewGroup parentView = (ViewGroup) menuPieton
 						.findViewById(R.id.MenuPietonGridLayout);
 				for (int i = 0; i < parentView.getChildCount(); i++) {
@@ -218,96 +203,118 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 					int resID = childView.getId();
 
 					switch (resID) {
-					
+
 					case R.id.BtnAutoStop:
 						final ImageButton btnAutoStop = (ImageButton) childView;
-						
+
 						btnAutoStop.setOnClickListener(new OnClickListener() {
-							
+
 							@Override
 							public void onClick(View v) {
-																
+
 								v.setEnabled(false);
-								
+
 								// initialize history array
 								history = new ArrayList<LatLng>();
-								
 
+								// quantity if Geopoint to be able to calculate
+								// bearing
+								final int nbOfGeoPts = 2;
 
-								// quantity if Geopoint to be able to calculate bearing
-								final int nbOfGeoPts =  2;
-								
 								AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-									
+
 									@Override
 									protected void onPreExecute() {
-										
+
 										locationManager.requestLocationUpdates(
-												LocationManager.GPS_PROVIDER, 2000, 10, PietonModeActivity.this);
+												LocationManager.GPS_PROVIDER,
+												2000, 10,
+												PietonModeActivity.this);
 										// Create a Dialog with a progress bar
-										progressDialog = new ProgressDialog(PietonModeActivity.this);
+										progressDialog = new ProgressDialog(
+												PietonModeActivity.this);
 										progressDialog.setMax(nbOfGeoPts);
-										progressDialog.setTitle("Echantillonage GPS");
-										progressDialog.setMessage("Avancer sur une dizaine de mètres dans la direction où vous souhaitez aller");
-										progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+										progressDialog
+												.setTitle("Echantillonage GPS");
+										progressDialog
+												.setMessage("Avancer sur une dizaine de mètres dans la direction où vous souhaitez aller");
+										progressDialog
+												.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 										progressDialog.setCancelable(false);
 										progressDialog.setIndeterminate(false);
 										progressDialog.show();
 									}
-										
+
 									@Override
 									protected Void doInBackground(Void... arg0) {
 										try {
-											// timeout in milliseconds (+/- threadSleep)
+											// timeout in milliseconds (+/-
+											// threadSleep)
 											final int timeout = 20000;
-											
-											// duration in milliseconds between progress status checks
+
+											// duration in milliseconds between
+											// progress status checks
 											final int threadSleep = 2000;
-											
-											// calculated maximum attemps to perform
-											final float attempsMax = timeout/threadSleep;
-											
+
+											// calculated maximum attemps to
+											// perform
+											final float attempsMax = timeout
+													/ threadSleep;
+
 											// attemps counter
 											int attempsCnt = 0;
-											
-											while ((progressDialog.getProgress() < progressDialog.getMax()) && (attempsCnt < attempsMax)) {
-												Log.i(this.getClass().getName(),"Check progress:" +progressDialog.getProgress()+ "/" +progressDialog.getMax());
+
+											while ((progressDialog
+													.getProgress() < progressDialog
+													.getMax())
+													&& (attempsCnt < attempsMax)) {
+												Log.i(this.getClass().getName(),
+														"Check progress:"
+																+ progressDialog
+																		.getProgress()
+																+ "/"
+																+ progressDialog
+																		.getMax());
 												Thread.sleep(threadSleep);
 											}
-											
+
 											try {
 												bearing = getBearing(history);
-												Log.i(PietonModeActivity.class.getName(), String.valueOf(bearing));
+												Log.i(PietonModeActivity.class
+														.getName(), String
+														.valueOf(bearing));
 
 											} catch (Exception e) {
 												e.printStackTrace();
 											}
-											
-											
+
 										} catch (InterruptedException e) {
 											e.printStackTrace();
 										}
 										return null;
 									}
-									
+
 									@Override
 									protected void onPostExecute(Void result) {
-										
+
 										locationManager.requestLocationUpdates(
-												LocationManager.GPS_PROVIDER, 5000, 0, PietonModeActivity.this);
-										// if the progressdialog has not been manualy closed, do it now
-										if (progressDialog!=null) {
+												LocationManager.GPS_PROVIDER,
+												5000, 0,
+												PietonModeActivity.this);
+										// if the progressdialog has not been
+										// manualy closed, do it now
+										if (progressDialog != null) {
 											progressDialog.dismiss();
 											// and re-enable the autostop button
 											btnAutoStop.setEnabled(true);
 										}
-										
+
 										placementAutoStop(bearing);
 
 									}
-										
+
 								};
-								task.execute((Void[])null);
+								task.execute((Void[]) null);
 
 							}
 						});
@@ -315,55 +322,39 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 
 					case R.id.BtnPanne:
 
-						((ImageButton) childView).setOnClickListener(new OnClickListener() {
-							
-							@Override
-							public void onClick(View v) {
-								panneAction();																
-							}
-						});
+						((ImageButton) childView)
+								.setOnClickListener(new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+										panneAction();
+										menuPieton.dismiss();
+									}
+								});
 						break;
-						
+
 					default:
 						break;
 					}
 				}
-				
+
 			}
-		});		
+		});
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.vehicule_mode, menu);
-		return true;
-	}
-	
-	@Override
-    protected void onResume() {
-            super.onResume();
-            //initilizeMap();
-    }
+	public boolean onMarkerClick(final Marker marker) {
 
-	@Override
-	public boolean onMarkerClick(final Marker marker){
-		
-		
-		if(_liMarkersPois.containsKey(marker)){
-			
-			Toast.makeText(getApplicationContext(),
-					"Marker found : ,"+_liMarkersPois.get(marker) +" please wait ..", Toast.LENGTH_LONG)
-					.show();
+		if (_liMarkersPois.containsKey(marker)) {
+			Log.i(TAG, "Marker found : ," + _liMarkersPois.get(marker)
+					+ " please wait ..");
 			clearAPoiREQ(_liMarkersPois.get(marker));
-		}else{
-			
+		} else {
+
 		}
-		
+
 		return true;
 	}
-
-	
 
 	private void initilizeMap() {
 
@@ -394,7 +385,7 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 								LocationManager.GPS_PROVIDER, 5000, 0, this);
 					}
 					// Refresh the location each 5 secondes (with Network)
-					
+
 					locationManager.requestLocationUpdates(
 							LocationManager.NETWORK_PROVIDER, 5000, 0, this);
 
@@ -424,19 +415,20 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 			}
 		}
 	}
-	
+
 	@Override
 	public void onLocationChanged(Location location) {
 
 		// Get the current position
-		currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+		currentPosition = new LatLng(location.getLatitude(),
+				location.getLongitude());
 
 		// Camera follow the new position
-		//@ModifMarc
+		// @ModifMarc
 		camera = CameraUpdateFactory.newLatLng(currentPosition);
 		googleMap.moveCamera(camera);
 		googleMap.animateCamera(camera);
-		
+
 		// If the progressionDialog is visible (from the autostop button), send
 		// it the current location too
 		if (progressDialog != null && progressDialog.isShowing()) {
@@ -449,27 +441,27 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 							"adding a new position to history");
 				}
 			}
-		}	
+		}
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	private float getBearing(List<LatLng> gpsPtsList) throws Exception {
 		float bearing;
 		float[] result = new float[3];
@@ -485,242 +477,251 @@ public class PietonModeActivity extends FragmentActivity implements LocationList
 					lastGpsPt.latitude, lastGpsPt.longitude, result);
 
 			bearing = result[1];
-			Log.i(PietonModeActivity.class.getName(), "Return bearing:" + String.valueOf(bearing));
+			Log.i(PietonModeActivity.class.getName(), "Return bearing:"
+					+ String.valueOf(bearing));
 			return bearing;
 		}
 	}
-	
+
 	/**
-	 *  The processing of a Panne 
+	 * The processing of a Panne
 	 */
-	private void panneAction(){
-		Toast.makeText(getApplicationContext(), "panneAction",
-				Toast.LENGTH_SHORT).show();
+	private void panneAction() {
 		currentPosition = getMyCurrentLocation();
 		LatLng pannePosition = currentPosition;
-		
-		Marker m = googleMap.addMarker(new MarkerOptions().
-								position(pannePosition).
-								icon(BitmapDescriptorFactory.fromResource(R.drawable.panne_96)));
-		addThisPoiREQ(currentPosition,TypePoi.NULLTYPE,m); //  null type to respresent Panne ^^
-		
+
+		Marker m = googleMap.addMarker(new MarkerOptions().position(
+				pannePosition).icon(
+				BitmapDescriptorFactory.fromResource(R.drawable.panne_96)));
+		addThisPoiREQ(currentPosition, TypePoi.NULLTYPE, m);
 	}
-	
+
 	/**
-	 *   Processing of Auto stope action 
-	 * @param bearing : direction ! 
+	 * Processing of Auto stope action
+	 * 
+	 * @param bearing
+	 *            : direction !
 	 */
-	private void placementAutoStop(float bearing){
-		
-		if(bearing >= -67.5 && bearing < -22.5){
-			//NORD EAST
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.nordest)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_NE,m);
+	private void placementAutoStop(float bearing) {
+
+		if (bearing >= -67.5 && bearing < -22.5) {
+			// NORD EAST
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.nordest)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_NE, m);
 		}
 
-		if(bearing >= -112.5 && bearing < -67.5){
-			//EAST
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.est)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_E,m);
-			
+		if (bearing >= -112.5 && bearing < -67.5) {
+			// EAST
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.est)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_E, m);
+
 		}
 
-		if(bearing >= -157.5 && bearing < -112.5){
+		if (bearing >= -157.5 && bearing < -112.5) {
 			// SOUTH EAST
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.sudest)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_SE,m);
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.sudest)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_SE, m);
 		}
 
-		if(bearing >= 157.5 && bearing < -157.5){
+		if (bearing >= 157.5 && bearing < -157.5) {
 			// SOUTH
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.sud)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_S,m);
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.sud)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_S, m);
 		}
 
-		if(bearing >= 112.5 && bearing < 157.5){
+		if (bearing >= 112.5 && bearing < 157.5) {
 			// SOUTH WEST
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.sudouest)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_SW,m);
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.sudouest)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_SW, m);
 		}
 
-		if(bearing >= 67.5 && bearing < 112.5){
+		if (bearing >= 67.5 && bearing < 112.5) {
 			// WEST
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.ouest)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_W,m);
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.ouest)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_W, m);
 		}
 
-		if(bearing >= 22.5 && bearing < 67.5){
+		if (bearing >= 22.5 && bearing < 67.5) {
 			// NORD WEST
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.nordouest)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_NW,m);
-			
+			Marker m = googleMap
+					.addMarker(new MarkerOptions().position(currentPosition)
+							.icon(BitmapDescriptorFactory
+									.fromResource(R.drawable.nordouest)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_NW, m);
+
 		}
 
-		if(bearing >= -22.5 || bearing < 22.5){
+		if (bearing >= -22.5 || bearing < 22.5) {
 			// NORD
-			Marker m = googleMap.addMarker(new MarkerOptions().
-					  position(currentPosition).
-					  icon(BitmapDescriptorFactory.fromResource(R.drawable.nord)));
-			addThisPoiREQ(currentPosition,TypePoi.PIETON_N,m);
-			
+			Marker m = googleMap.addMarker(new MarkerOptions().position(
+					currentPosition).icon(
+					BitmapDescriptorFactory.fromResource(R.drawable.nord)));
+			addThisPoiREQ(currentPosition, TypePoi.PIETON_N, m);
+
 		}
 
+		Log.i(TAG, "Calculated bearing: " + bearing);
+
+		// Keep this toast only for DEMO PUPOSE
 		Toast.makeText(getApplicationContext(), "bearing : " + bearing,
 				Toast.LENGTH_LONG).show();
 	}
-	
-	/**
-	 *    Clear the markers from the map. this has a local effect 
-	 *     To delete a spacific marker (poi)  for all the community 
-	 *     right click on the marker ...  you will be guided don't worry ^^
-	 */
-	public void clearAllMarkersREQ(){
-		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(" Do you want to delete all POI s ?");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"Yes delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                _liMarkersPois.clear();
-                googleMap.clear();
-            }
-        });
-        builder1.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"No delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                
-            }
-        });
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
-		//
-	}
-	
 	/**
-	 *   Request to the server to add this poi
-	 * @param pos  : position of the poi to be added 
-	 * @param type : type of the poi to add
+	 * Clear the markers from the map. this has a local effect To delete a
+	 * spacific marker (poi) for all the community right click on the marker ...
+	 * you will be guided don't worry ^^
 	 */
-	public void addThisPoiREQ(LatLng pos,TypePoi type,Marker m ){
-		
-		Toast.makeText(getApplicationContext(), "add Marker: "+type+" ,  "+
-				pos.latitude+" - "+pos.longitude,
-				Toast.LENGTH_SHORT).show();
-		
+	public void clearAllMarkersREQ() {
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+		builder1.setMessage("   Supprimer tous les POIs ?");
+		builder1.setCancelable(true);
+		builder1.setPositiveButton("Oui",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						Log.i(TAG, "All POIs have been deleted");
+						Toast.makeText(getApplicationContext(),
+								" Suppression de tous les POIs (En local)",
+								Toast.LENGTH_LONG).show();
+						dialog.cancel();
+						_liMarkersPois.clear();
+						googleMap.clear();
+					}
+				});
+		builder1.setNegativeButton("Non",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+
+		AlertDialog alert11 = builder1.create();
+		alert11.show();
+	}
+
+	/**
+	 * Request to the server to add this poi
+	 * 
+	 * @param pos
+	 *            : position of the poi to be added
+	 * @param type
+	 *            : type of the poi to add
+	 */
+	public void addThisPoiREQ(LatLng pos, TypePoi type, Marker m) {
+		Log.i(TAG, "add Marker: " + type + " ,  "
+				+ getMyCurrentLocation().latitude + " - "
+				+ getMyCurrentLocation().longitude);
 		Poi po = new Poi();
-		po.setCurLat(pos.latitude);po.setCurLong(pos.longitude);
+		po.setCurLat(pos.latitude);
+		po.setCurLong(pos.longitude);
 		po.setType(type);
-		po.setLabel(type+"  label");
+		po.setLabel(type + "  label");
 		// call the service to add poi
-		Poi p =_poicntrl.addPoi(po);
-		if(p !=  null){
-			if(_liMarkersPois== null)  _liMarkersPois= new HashMap<Marker,Long>();
+		Poi p = _poicntrl.addPoi(po);
+		if (p != null) {
+			if (_liMarkersPois == null)
+				_liMarkersPois = new HashMap<Marker, Long>();
 			_liMarkersPois.put(m, p.getIdpoi());
 		}
-		
+
 	}
-	
+
 	/**
 	 * Clear a poi from the map
 	 * 
-	 * @param poid : the poi identifier 
+	 * @param poid
+	 *            : the poi identifier
 	 */
-	public void clearAPoiREQ(final Long poid){
-		
-		
-		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage(" Do you want to delete this POI s "+poid+"?");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"Yes delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                // MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
-           
-                 Long idPoiToDelete = poid;
-                 _poicntrl.deletePoi(idPoiToDelete);
-                 googleMap.clear();
-                _liMarkersPois.clear();
-               // populateTheMapWithPoi(googleMap);
-            }
-        });
-        builder1.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            	Toast.makeText(getApplicationContext(),
-						"No delete ", Toast.LENGTH_LONG)
-						.show();
-                dialog.cancel();
-                
-            }
-        });
+	public void clearAPoiREQ(final Long poid) {
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
-		
+		AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+		builder1.setMessage(" Supprimer ce POI: " + poid + "?");
+		builder1.setCancelable(true);
+		builder1.setPositiveButton("Oui",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+						// MAKE A CALL TO THE POI SERVICE TO DELETE THIS POI
+						Long idPoiToDelete = poid;
+						_poicntrl.deletePoi(idPoiToDelete);
+						Toast.makeText(getApplicationContext(),
+								"Le POI a bien été supprimé",
+								Toast.LENGTH_SHORT).show();
+						googleMap.clear();
+						_liMarkersPois.clear();
+					}
+				});
+		builder1.setNegativeButton("Non",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+
+		AlertDialog alert11 = builder1.create();
+		alert11.show();
+
 	}
+
 	/**
-	 * Request to the server to download all pois 
+	 * Current location
+	 * 
+	 * @return : current location
 	 */
-	public void loaddAllPOIREQ(){
-		
-            	Toast.makeText(getApplicationContext(),
-						" Download  poi from server in pieton mod impossible ", Toast.LENGTH_LONG)
-						.show();
-              	
-	}
-	
-	/**
-	 *  Current location 
-	 * @return    : current location
-	 */
-	public LatLng getMyCurrentLocation(){
-		
+	public LatLng getMyCurrentLocation() {
+
 		LocationManager locationManager = (LocationManager) this
 				.getSystemService(LOCATION_SERVICE);
-		if(locationManager ==null)   return  null;
-		
-		String provider = locationManager.getBestProvider(
-				new Criteria(), true);
+		if (locationManager == null)
+			return null;
+
+		String provider = locationManager.getBestProvider(new Criteria(), true);
 
 		if (provider != null) {
 			// Get the last know position even if outdated
-			Location location = locationManager
-					.getLastKnownLocation(provider);
+			Location location = locationManager.getLastKnownLocation(provider);
 			if (location != null) {
-				LatLng lastPosition = new LatLng(
-						location.getLatitude(),
+				LatLng lastPosition = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				return lastPosition;
 			}
 		}
-	   return null;		
+		return null;
 	}
-	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Reinitializing the map
+		initilizeMap();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (locationManager != null) {
+			locationManager.removeUpdates(this);
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onPause();
+		if (locationManager != null) {
+			locationManager.removeUpdates(this);
+		}
+	}
+
 }
