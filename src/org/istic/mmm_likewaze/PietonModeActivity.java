@@ -701,6 +701,7 @@ public class PietonModeActivity extends FragmentActivity implements
 		return null;
 	}
 
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -708,20 +709,27 @@ public class PietonModeActivity extends FragmentActivity implements
 		initilizeMap();
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (locationManager != null) {
-			locationManager.removeUpdates(this);
-		}
-	}
-
-	@Override
-	protected void onStop() {
-		super.onPause();
-		if (locationManager != null) {
-			locationManager.removeUpdates(this);
-		}
-	}
+//	@Override
+//	protected void onRestart() {
+//		super.onRestart();
+//		// Reinitializing the map
+//		initilizeMap();
+//	}
+//	
+//	@Override
+//	protected void onPause() {
+//		super.onPause();
+//		if (locationManager != null) {
+//			locationManager.removeUpdates(this);
+//		}
+//	}
+//
+//	@Override
+//	protected void onStop() {
+//		super.onPause();
+//		if (locationManager != null) {
+//			locationManager.removeUpdates(this);
+//		}
+//	}
 
 }

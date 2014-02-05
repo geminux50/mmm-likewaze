@@ -843,28 +843,35 @@ public class VehiculeModeActivity extends FragmentActivity implements
 		}
 	};
 
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		// Reinitializing the map
 		initilizeMap();
-
 	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (locationManager != null) {
-			locationManager.removeUpdates(this);
-		}
-	}
-
-	@Override
-	protected void onStop() {
-		super.onPause();
-		if (locationManager != null) {
-			locationManager.removeUpdates(this);
-		}
-	}
+	
+//	@Override
+//	protected void onRestart() {
+//		super.onRestart();
+//		// Reinitializing the map
+//		initilizeMap();
+//	}
+//
+//	@Override
+//	protected void onPause() {
+//		super.onPause();
+//		if (locationManager != null) {
+//			locationManager.removeUpdates(this);
+//		}
+//	}
+//
+//	@Override
+//	protected void onStop() {
+//		super.onPause();
+//		if (locationManager != null) {
+//			locationManager.removeUpdates(this);
+//		}
+//	}
 
 }
